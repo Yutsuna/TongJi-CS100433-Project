@@ -1,0 +1,12 @@
+.direnv/
+.idea/
+cache/
+.cache/
+.zed/
+Build/
+__pycache__/
+ThirdParty/
+result
+compile_commands.json
+Ex*
+!Ex*/
