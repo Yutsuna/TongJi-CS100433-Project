@@ -8,5 +8,4 @@ __pycache__/
 ThirdParty/
 result
 compile_commands.json
-Ex*
-!Ex*/
+Lumina
