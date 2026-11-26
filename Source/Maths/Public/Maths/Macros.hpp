@@ -1,6 +1,6 @@
 /**
  * @file Macros.hpp
- * @brief Common macros for Lumen MathsCore module
+ * @brief Common macros for Lumina MathsCore module
  */
 
 #pragma once
@@ -11,7 +11,7 @@
 #include <limits>
 #include <numbers>
 
-namespace Lumen
+namespace Lumina
 {
 
 namespace Maths
@@ -40,6 +40,6 @@ namespace Maths
 
 } // namespace Maths
 
-} // namespace Lumen
+} // namespace Lumina
 
 #include "Inline/Macros.inl"

@@ -1,6 +1,6 @@
 /**
  * @file Matrix.hpp
- * @brief Lumen column-major matrix
+ * @brief Lumina column-major matrix
  */
 
 #pragma once
@@ -11,7 +11,7 @@
 #include <Maths/Vec.hpp>
 #include <MathsExport.hpp>
 
-namespace Lumen
+namespace Lumina
 {
 
 namespace Maths
@@ -185,6 +185,6 @@ namespace Maths
 
 } // namespace Maths
 
-} // namespace Lumen
+} // namespace Lumina
 
 #include "Inline/Matrix.inl"

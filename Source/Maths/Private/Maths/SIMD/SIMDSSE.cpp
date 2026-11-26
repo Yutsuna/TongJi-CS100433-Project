@@ -9,7 +9,7 @@
 
     #include <Maths/SIMD/Backend/SIMDSSE.hpp>
 
-void Lumen::Maths::SIMD::MatrixMul4x4 ( const Float32 *InLeft, const Float32 *InRight, Float32 *OutResult ) noexcept
+void Lumina::Maths::SIMD::MatrixMul4x4 ( const Float32 *InLeft, const Float32 *InRight, Float32 *OutResult ) noexcept
 {
     const __m128 L0 = _mm_loadu_ps( InLeft + 0 );
     const __m128 L1 = _mm_loadu_ps( InLeft + 4 );
@@ -40,7 +40,7 @@ void Lumen::Maths::SIMD::MatrixMul4x4 ( const Float32 *InLeft, const Float32 *In
     }
 }
 
-void Lumen::Maths::SIMD::MatrixScalarMul4x4 ( const Float32 *InMatrix, const Float32 Scalar, Float32 *OutResult ) noexcept
+void Lumina::Maths::SIMD::MatrixScalarMul4x4 ( const Float32 *InMatrix, const Float32 Scalar, Float32 *OutResult ) noexcept
 {
     const __m128 ScalarVec = _mm_set1_ps( Scalar );
 

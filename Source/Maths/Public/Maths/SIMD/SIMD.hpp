@@ -17,7 +17,7 @@
     #define LUMINA_SIMD_GENERIC 1
 #endif
 
-namespace Lumen
+namespace Lumina
 {
 
 namespace Maths
@@ -38,4 +38,4 @@ namespace Maths
 
 } // namespace Maths
 
-} // namespace Lumen
+} // namespace Lumina

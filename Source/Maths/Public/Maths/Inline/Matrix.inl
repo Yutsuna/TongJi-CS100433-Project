@@ -11,7 +11,7 @@
 
 #include <cmath>
 
-namespace Lumen
+namespace Lumina
 {
 
 namespace Maths
@@ -274,7 +274,7 @@ namespace Maths
     {
         TMatrix<Type, Rows, Columns> Result;
 
-        if constexpr ( ::Lumen::Concepts::CSameAs<Type, Float32> and Rows == 4 and Inner == 4 and Columns == 4 )
+        if constexpr ( ::Lumina::Concepts::CSameAs<Type, Float32> and Rows == 4 and Inner == 4 and Columns == 4 )
         {
             SIMD::MatrixMul4x4( reinterpret_cast<const Float32 *>( &Left ), reinterpret_cast<const Float32 *>( &Right ),
                                 reinterpret_cast<Float32 *>( &Result ) );
@@ -325,7 +325,7 @@ namespace Maths
     {
         TMatrix<Type, Rows, Columns> Result;
 
-        if constexpr ( ::Lumen::Concepts::CSameAs<Type, Float32> and Rows == 4 and Columns == 4 )
+        if constexpr ( ::Lumina::Concepts::CSameAs<Type, Float32> and Rows == 4 and Columns == 4 )
         {
             SIMD::MatrixScalarMul4x4( reinterpret_cast<const Float32 *>( &Left ), static_cast<Float32>( Scalar ),
                                       reinterpret_cast<Float32 *>( &Result ) );
@@ -411,4 +411,4 @@ namespace Maths
 
 } // namespace Maths
 
-} // namespace Lumen
+} // namespace Lumina

@@ -8,7 +8,7 @@
 #include <Concepts/SameAs.hpp>
 #include <Core/CoreTypes.hpp>
 
-namespace Lumen
+namespace Lumina
 {
 
 namespace Maths
@@ -21,7 +21,7 @@ namespace Maths
         {
 
             template <typename Type>
-            concept CSIMDType = ::Lumen::Concepts::CSameAs<Type, Float32> or ::Lumen::Concepts::CSameAs<Type, Int32>;
+            concept CSIMDType = ::Lumina::Concepts::CSameAs<Type, Float32> or ::Lumina::Concepts::CSameAs<Type, Int32>;
 
         } // namespace Concepts
 
@@ -51,4 +51,4 @@ namespace Maths
 
 } // namespace Maths
 
-} // namespace Lumen
+} // namespace Lumina

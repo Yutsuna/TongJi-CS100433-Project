@@ -11,7 +11,7 @@
 
     #include <arm_neon.h>
 
-namespace Lumen
+namespace Lumina
 {
 
 namespace Maths
@@ -61,7 +61,7 @@ namespace Maths
 
 } // namespace Maths
 
-} // namespace Lumen
+} // namespace Lumina
 
     #include "Inline/SIMDNeon.inl"
 

@@ -7,7 +7,7 @@
 
 #include <cmath>
 
-namespace Lumen
+namespace Lumina
 {
 
 namespace Maths
@@ -68,7 +68,7 @@ namespace Maths
         requires CVecDimension<Type, Dimension>
 
     template <typename... TArgs>
-        requires( sizeof...( TArgs ) == Dimension and ( Lumen::Concepts::CConvertibleTo<TArgs, Type> && ... ) )
+        requires( sizeof...( TArgs ) == Dimension and ( Lumina::Concepts::CConvertibleTo<TArgs, Type> && ... ) )
 
     constexpr TVec<Type, Dimension>::TVec( TArgs &&...Args ) noexcept
         : Internal::TVecData<Type, Dimension>{ static_cast<Type>( Args )... }
@@ -205,7 +205,7 @@ namespace Maths
 
         TVec Result;
 
-        if constexpr ( Lumen::Concepts::CIsIntegral<Type> )
+        if constexpr ( Lumina::Concepts::CIsIntegral<Type> )
         {
             for ( USize Index = 0; Index < Dimension; ++Index )
             {
@@ -345,4 +345,4 @@ namespace Maths
 
 } // namespace Maths
 
-} // namespace Lumen
+} // namespace Lumina

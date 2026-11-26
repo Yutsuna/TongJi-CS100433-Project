@@ -10,7 +10,7 @@
 #include <Core/CoreDefinitions.hpp>
 #include <Maths/Vec.hpp>
 
-namespace Lumen
+namespace Lumina
 {
 
 namespace Maths
@@ -34,12 +34,12 @@ namespace Maths
                             const Maths::FVec3f &InTangent ) noexcept;
         constexpr FVertex ( const Maths::FVec3f &InPosition ) noexcept;
 
-        constexpr Lumen::Bool operator==( const FVertex &Other ) const noexcept;
-        constexpr Lumen::Bool operator!=( const FVertex &Other ) const noexcept;
+        constexpr Lumina::Bool operator==( const FVertex &Other ) const noexcept;
+        constexpr Lumina::Bool operator!=( const FVertex &Other ) const noexcept;
     };
 
 } // namespace Maths
 
-} // namespace Lumen
+} // namespace Lumina
 
 #include "Inline/Vertex.inl"

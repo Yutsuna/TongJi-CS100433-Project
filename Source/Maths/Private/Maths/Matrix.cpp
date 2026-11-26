@@ -5,7 +5,7 @@
 
 #include <Maths/Matrix.hpp>
 
-void Lumen::Maths::TransformAABB (
+void Lumina::Maths::TransformAABB (
     const FVec3f &LocalMin, const FVec3f &LocalMax, const FMat4x4f &Transform, FVec3f &OutWorldMin, FVec3f &OutWorldMax ) noexcept
 {
     const FVec3f T{ Transform[3].Data[0], Transform[3].Data[1], Transform[3].Data[2] };

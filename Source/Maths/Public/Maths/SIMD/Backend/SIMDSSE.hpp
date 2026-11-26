@@ -11,7 +11,7 @@
 
     #include <immintrin.h>
 
-namespace Lumen
+namespace Lumina
 {
 
 namespace Maths
@@ -67,7 +67,7 @@ namespace Maths
 
 } // namespace Maths
 
-} // namespace Lumen
+} // namespace Lumina
 
     #include "Inline/SIMDSSE.inl"
 

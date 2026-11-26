@@ -12,7 +12,7 @@
 
 #include <MathsExport.hpp>
 
-namespace Lumen
+namespace Lumina
 {
 
 namespace Maths
@@ -194,7 +194,7 @@ namespace Maths
         template <typename OtherType> constexpr explicit TVec( const TVec<OtherType, Dimension> &Other ) noexcept;
 
         template <typename... TArgs>
-            requires( sizeof...( TArgs ) == Dimension and ( Lumen::Concepts::CConvertibleTo<TArgs, Type> and ... ) )
+            requires( sizeof...( TArgs ) == Dimension and ( Lumina::Concepts::CConvertibleTo<TArgs, Type> and ... ) )
         constexpr TVec( TArgs &&...Args ) noexcept;
 
         /** Operators */
@@ -257,6 +257,6 @@ namespace Maths
 
 } // namespace Maths
 
-} // namespace Lumen
+} // namespace Lumina
 
 #include "Inline/Vec.inl"

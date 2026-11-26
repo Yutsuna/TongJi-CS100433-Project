@@ -7,7 +7,7 @@
 
 #include <Maths/SIMD/Backend/SIMDNeon.hpp>
 
-namespace Lumen
+namespace Lumina
 {
 
 namespace Maths
@@ -44,4 +44,4 @@ namespace Maths
 
 } // namespace Maths
 
-} // namespace Lumen
+} // namespace Lumina

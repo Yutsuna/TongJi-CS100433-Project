@@ -9,7 +9,7 @@
 
     #include <Maths/SIMD/Backend/SIMDNeon.hpp>
 
-void Lumen::Maths::SIMD::MatrixMul4x4 ( const Float32 *InLeft, const Float32 *InRight, Float32 *OutResult ) noexcept
+void Lumina::Maths::SIMD::MatrixMul4x4 ( const Float32 *InLeft, const Float32 *InRight, Float32 *OutResult ) noexcept
 {
     [[assume( ( reinterpret_cast<UPtr>( InLeft ) & 15 ) == 0 )]];
     [[assume( ( reinterpret_cast<UPtr>( InRight ) & 15 ) == 0 )]];
@@ -34,7 +34,7 @@ void Lumen::Maths::SIMD::MatrixMul4x4 ( const Float32 *InLeft, const Float32 *In
     }
 }
 
-void Lumen::Maths::SIMD::MatrixScalarMul4x4 ( const Float32 *InMatrix, const Float32 Scalar, Float32 *OutResult ) noexcept
+void Lumina::Maths::SIMD::MatrixScalarMul4x4 ( const Float32 *InMatrix, const Float32 Scalar, Float32 *OutResult ) noexcept
 {
     const float32x4_t VecScalar = vdupq_n_f32( Scalar );
 
