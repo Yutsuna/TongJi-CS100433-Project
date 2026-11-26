@@ -7,6 +7,7 @@
 
 #include <Core/CoreTypes.hpp>
 #include <Core/EnumFlags.hpp>
+#include <Templates/Expected.hpp>
 
 #include <Maths/Vec.hpp>
 
@@ -46,6 +47,8 @@ namespace RHI
         ERHIErrorCode Code = ERHIErrorCode::InitializationFailed;
         FString Message;
     };
+
+    using FRHIExpected = TExpected<void, FRHIError>;
 
     /**
      * @enum ERHIBufferUsage
