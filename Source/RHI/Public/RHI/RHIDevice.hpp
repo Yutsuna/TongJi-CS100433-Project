@@ -17,6 +17,7 @@
 #include <RHI/RHIPipeline.hpp>
 #include <RHI/RHITexture.hpp>
 #include <RHI/RHIWindow.hpp>
+#include <RHIExport.hpp>
 
 namespace Lumina
 {
@@ -39,7 +40,12 @@ namespace RHI
 
     public:
 
-        /** @brief Creates a new RHI device. */
+        /**
+         * @brief Creates a new RHI device.
+         *
+         * NOTE: The caller must keep InWindow alive for the entire lifetime of the returned device. The device stores a
+         * non-owning pointer to it and dereferences it in IsValid() and CheckThread().
+         */
         [[nodiscard]] static TExpected<FRHIDevice, FRHIError> Create ( FRHIWindow &InWindow );
 
     public:
@@ -93,6 +99,7 @@ namespace RHI
 
         explicit FRHIDevice ( FRHIWindow &InWindow ) noexcept;
 
+        /** NOTE: Non-owning; the caller must keep the window alive for the device's lifetime (see Create). */
         FRHIWindow *Window = nullptr;
         FRHICapabilities Capabilities;
         FThread::FId OwnerThread;

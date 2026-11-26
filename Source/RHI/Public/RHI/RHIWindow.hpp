@@ -12,6 +12,7 @@
 #include <RHIExport.hpp>
 
 #include <Templates/Expected.hpp>
+#include <Templates/Optional.hpp>
 
 namespace Lumina
 {
@@ -60,7 +61,7 @@ namespace RHI
 
         [[nodiscard]] Bool ShouldClose () const noexcept;
         [[nodiscard]] Bool IsValid () const noexcept;
-        [[nodiscard]] Maths::FVec2u GetFramebufferSize () const noexcept;
+        [[nodiscard]] TOptional<Maths::FVec2u> GetFramebufferSize () const noexcept;
 
     private:
 

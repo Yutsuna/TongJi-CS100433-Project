@@ -111,6 +111,11 @@ void LRHI::FRHICommandList::BindPipeline ( const FRHIGraphicsPipeline &InPipelin
 {
     Device->CheckThread();
     LUMINA_ASSERT( InPipeline.IsValid() );
+    if ( not InPipeline.IsValid() )
+    {
+        LUMINA_LOG_ERROR( LRHI::Internal::LogRHI, "BindPipeline called with an invalid graphics pipeline" );
+        return;
+    }
     if ( CurrentProgram != InPipeline.Program )
     {
         Internal::UseProgram( InPipeline.Program );
@@ -129,6 +134,11 @@ void LRHI::FRHICommandList::BindPipeline ( const FRHIComputePipeline &InPipeline
 {
     Device->CheckThread();
     LUMINA_ASSERT( InPipeline.IsValid() );
+    if ( not InPipeline.IsValid() )
+    {
+        LUMINA_LOG_ERROR( LRHI::Internal::LogRHI, "BindPipeline called with an invalid compute pipeline" );
+        return;
+    }
     if ( CurrentProgram != InPipeline.Program )
     {
         Internal::UseProgram( InPipeline.Program );
@@ -141,6 +151,13 @@ void LRHI::FRHICommandList::BindVertexBuffer ( const FRHIBuffer &InBuffer, const
 {
     LUMINA_ASSERT( CurrentGraphicsPipeline != nullptr );
     LUMINA_ASSERT( HasAnyFlags( InBuffer.Usage, ERHIBufferUsage::Vertex ) );
+
+    if ( CurrentGraphicsPipeline == nullptr or not HasAnyFlags( InBuffer.Usage, ERHIBufferUsage::Vertex ) )
+    {
+        LUMINA_LOG_ERROR( LRHI::Internal::LogRHI,
+                          "BindVertexBuffer called with no graphics pipeline bound or a buffer without vertex usage" );
+        return;
+    }
 
     const auto *const Binding =
         Algo::FindIf( CurrentGraphicsPipeline->VertexBindings, [InBinding] ( const FRHIVertexBinding &InValue ) noexcept
@@ -161,6 +178,14 @@ void LRHI::FRHICommandList::BindIndexBuffer ( const FRHIBuffer &InBuffer ) const
     LUMINA_ASSERT( CurrentVertexArray != UnknownHandle and CurrentVertexArray != 0U );
     LUMINA_ASSERT( HasAnyFlags( InBuffer.Usage, ERHIBufferUsage::Index ) );
 
+    if ( CurrentVertexArray == UnknownHandle or CurrentVertexArray == 0U or
+         not HasAnyFlags( InBuffer.Usage, ERHIBufferUsage::Index ) )
+    {
+        LUMINA_LOG_ERROR( LRHI::Internal::LogRHI,
+                          "BindIndexBuffer called with no vertex array bound or a buffer without index usage" );
+        return;
+    }
+
     Internal::VertexArrayElementBuffer( CurrentVertexArray, InBuffer.Id );
 }
 
@@ -168,6 +193,12 @@ void LRHI::FRHICommandList::BindUniformBuffer ( const FRHIBuffer &InBuffer, cons
 {
     LUMINA_ASSERT( InBinding < BufferSlotCount );
     LUMINA_ASSERT( HasAnyFlags( InBuffer.Usage, ERHIBufferUsage::Uniform ) );
+
+    if ( InBinding >= BufferSlotCount )
+    {
+        LUMINA_LOG_ERROR( LRHI::Internal::LogRHI, "Uniform buffer binding {} exceeds the slot count", InBinding );
+        return;
+    }
 
     if ( UniformBufferSlots[InBinding] != InBuffer.Id )
     {
@@ -183,6 +214,12 @@ void LRHI::FRHICommandList::BindStorageBuffer ( const FRHIBuffer &InBuffer, cons
     LUMINA_ASSERT( InBinding < BufferSlotCount );
     LUMINA_ASSERT( InBinding < Device->GetCapabilities().MaxStorageBufferBindings );
     LUMINA_ASSERT( HasAnyFlags( InBuffer.Usage, ERHIBufferUsage::Storage ) );
+
+    if ( InBinding >= BufferSlotCount or InBinding >= Device->GetCapabilities().MaxStorageBufferBindings )
+    {
+        LUMINA_LOG_ERROR( LRHI::Internal::LogRHI, "Storage buffer binding {} exceeds the slot count or device limit", InBinding );
+        return;
+    }
 
     if ( StorageBufferSlots[InBinding] != InBuffer.Id )
     {
@@ -200,6 +237,12 @@ void LRHI::FRHICommandList::BindTexture ( const FRHITexture &InTexture,
     LUMINA_ASSERT( InSlot < TextureSlotCount );
     LUMINA_ASSERT( InSlot < Device->GetCapabilities().MaxCombinedTextureUnits );
     LUMINA_ASSERT( InTexture.IsValid() );
+
+    if ( InSlot >= TextureSlotCount or InSlot >= Device->GetCapabilities().MaxCombinedTextureUnits )
+    {
+        LUMINA_LOG_ERROR( LRHI::Internal::LogRHI, "Texture slot {} exceeds the slot count or device limit", InSlot );
+        return;
+    }
 
     if ( TextureSlots[InSlot] != InTexture.Id )
     {
@@ -225,6 +268,12 @@ void LRHI::FRHICommandList::BindImage ( const FRHITexture &InTexture,
     LUMINA_ASSERT( InSlot < ImageSlotCount );
     LUMINA_ASSERT( InSlot < Device->GetCapabilities().MaxImageUnits );
     LUMINA_ASSERT( InTexture.IsValid() and InMipLevel < InTexture.MipLevels );
+
+    if ( InSlot >= ImageSlotCount or InSlot >= Device->GetCapabilities().MaxImageUnits )
+    {
+        LUMINA_LOG_ERROR( LRHI::Internal::LogRHI, "Image slot {} exceeds the slot count or device limit", InSlot );
+        return;
+    }
 
     if ( ImageSlots[InSlot] != InTexture.Id or ImageMipLevels[InSlot] != InMipLevel or ImageAccesses[InSlot] != InAccess )
     {
@@ -267,6 +316,11 @@ void LRHI::FRHICommandList::ClearColor ( const Maths::FVec4f &InColor ) const no
 void LRHI::FRHICommandList::Draw ( const UInt32 InVertexCount, const UInt32 InFirstVertex ) const noexcept
 {
     LUMINA_ASSERT( CurrentGraphicsPipeline != nullptr );
+    if ( CurrentGraphicsPipeline == nullptr )
+    {
+        LUMINA_LOG_ERROR( LRHI::Internal::LogRHI, "Draw called with no graphics pipeline bound" );
+        return;
+    }
     Internal::DrawArrays( ToGLTopology( CurrentGraphicsPipeline->State.Topology ), static_cast<GLint>( InFirstVertex ),
                           static_cast<GLsizei>( InVertexCount ) );
 }
@@ -276,6 +330,11 @@ void LRHI::FRHICommandList::DrawIndexed ( const UInt32 InIndexCount,
                                           const USize InByteOffset ) const noexcept
 {
     LUMINA_ASSERT( CurrentGraphicsPipeline != nullptr );
+    if ( CurrentGraphicsPipeline == nullptr )
+    {
+        LUMINA_LOG_ERROR( LRHI::Internal::LogRHI, "DrawIndexed called with no graphics pipeline bound" );
+        return;
+    }
 
     const GLenum Type = InIndexType == ERHIIndexType::UInt16 ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT;
     Internal::DrawElements( ToGLTopology( CurrentGraphicsPipeline->State.Topology ), static_cast<GLsizei>( InIndexCount ), Type,

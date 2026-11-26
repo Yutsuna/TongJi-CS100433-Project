@@ -13,7 +13,7 @@
 Lumina::RHI::FRHIGraphicsPipeline::FRHIGraphicsPipeline ( const UInt32 InProgram,
                                                           const UInt32 InVertexArray,
                                                           const FRHIGraphicsState &InState,
-                                                          const TSpan<const FRHIVertexBinding> InBindings )
+                                                          const TSpan<const FRHIVertexBinding> InBindings ) noexcept
     : FRHIPipeline( InProgram ), VertexArray( InVertexArray ), State( InState ),
       VertexBindings( InBindings.begin(), InBindings.end() )
 {

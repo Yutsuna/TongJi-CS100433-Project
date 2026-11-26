@@ -8,6 +8,7 @@
 #include "RHIPrivate.hpp"
 #include <RHI/RHIDevice.hpp>
 
+#include <Algo/Any.hpp>
 #include <Algo/Find.hpp>
 #include <Algo/ForEach.hpp>
 #include <Filesystem/File.hpp>
@@ -177,11 +178,7 @@ Lumina::TExpected<LRHI::FRHIDevice, LRHI::FRHIError> LRHI::FRHIDevice::Create ( 
     }
 
     InWindow.MakeContextCurrent();
-    if ( not Internal::LoadGLFunctions() ) [[unlikely]]
-    {
-        return MakeUnexpected( Internal::MakeError( ERHIErrorCode::InitializationFailed,
-                                                    "One or more required OpenGL 4.6 functions are unavailable" ) );
-    }
+    LUMINA_TRY_EXPECT_ERROR( Internal::LoadGLFunctions() );
 
     FRHIDevice Result( InWindow );
     const auto ReadString = [] ( const GLenum InName ) noexcept -> FString
@@ -474,15 +471,14 @@ LRHI::FRHIDevice::CreateGraphicsPipeline ( const FRHIGraphicsPipelineDesc &InDes
         return MakeUnexpected( Internal::MakeError( ERHIErrorCode::BackendError, "glCreateVertexArrays failed" ) );
     }
 
-    for ( const FRHIVertexBinding &Binding : InDesc.VertexBindings )
+    if ( Algo::AnyOf( InDesc.VertexBindings, [&] ( const FRHIVertexBinding &InBinding ) noexcept -> Bool
     {
-        if ( Binding.Stride == 0U )
-        {
-            Internal::DeleteVertexArrays( 1, &VertexArray );
-            Internal::DeleteProgram( Program );
-            return MakeUnexpected(
-                Internal::MakeError( ERHIErrorCode::InvalidArgument, "Vertex binding stride must be non-zero" ) );
-        }
+        return InBinding.Stride == 0U;
+    } ) )
+    {
+        Internal::DeleteVertexArrays( 1, &VertexArray );
+        Internal::DeleteProgram( Program );
+        return MakeUnexpected( Internal::MakeError( ERHIErrorCode::InvalidArgument, "Vertex binding stride must be non-zero" ) );
     }
 
     for ( const FRHIVertexAttribute &Attribute : InDesc.VertexAttributes )

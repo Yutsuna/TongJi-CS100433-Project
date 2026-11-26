@@ -8,6 +8,8 @@
 #include <Core/CoreTypes.hpp>
 #include <GL/glcorearb.h>
 
+#include <RHI/RHITypes.hpp>
+
 #define RHI_GL_FUNCTION_LIST( X )                                                                                                \
     X( PFNGLGETSTRINGPROC, "glGetString", GetString )                                                                            \
     X( PFNGLGETINTEGERVPROC, "glGetIntegerv", GetIntegerv )                                                                      \
@@ -104,10 +106,10 @@ namespace RHI
 #undef RHI_GL_DECLARE
 
         /**
-         * @brief Loads the OpenGL functions
-         * @return True if the functions were loaded successfully, false otherwise
+         * @brief Loads the OpenGL functions once, publishing the populated table to all later callers.
+         * @return Success, or an error if a required OpenGL 4.6 function is unavailable.
          */
-        [[nodiscard]] Bool LoadGLFunctions () noexcept;
+        [[nodiscard]] FRHIExpected LoadGLFunctions () noexcept;
 
     } // namespace Internal
 

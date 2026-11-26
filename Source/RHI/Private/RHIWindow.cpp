@@ -6,8 +6,11 @@
 #include <RHI/RHIWindow.hpp>
 #include <RHIPrivate.hpp>
 
+#include <HAL/LockGuard.hpp>
+#include <HAL/PlatformMutex.hpp>
 #include <Maths/Vec.hpp>
 #include <String/String.hpp>
+#include <Templates/Optional.hpp>
 
 extern "C"
 {
@@ -30,12 +33,16 @@ namespace LRHI = Lumina::RHI;
 Lumina::UInt32 WindowCount     = 0U;
 Lumina::Bool bErrorCallbackSet = false;
 
+/** NOTE: Serializes GLFW init/terminate and the window count they depend on. */
+Lumina::HAL::FPlatformMutex GLFWStateMutex;
+
 inline void OnGLFWError ( const Lumina::Int32 InCode, const Lumina::AnsiChar *InDescription ) noexcept
 {
     LUMINA_LOG_ERROR( LRHI::Internal::LogRHI, "GLFW error {}: {}", InCode, InDescription );
 }
 
-inline void EnsureErrorCallback () noexcept
+/** NOTE: The caller must hold GLFWStateMutex. */
+inline void EnsureErrorCallbackLocked () noexcept
 {
     if ( not bErrorCallbackSet )
     {
@@ -67,9 +74,10 @@ inline void EnsureErrorCallback () noexcept
     return {};
 }
 
-[[nodiscard]] inline Lumina::TExpected<void, LRHI::FRHIError> EnsureGLFWInitialized () noexcept
+/** NOTE: The caller must hold GLFWStateMutex and keep it until the window count is updated. */
+[[nodiscard]] inline Lumina::TExpected<void, LRHI::FRHIError> EnsureGLFWInitializedLocked () noexcept
 {
-    EnsureErrorCallback();
+    EnsureErrorCallbackLocked();
 
     if ( WindowCount == 0U and glfwInit() == GLFW_FALSE ) [[unlikely]]
     {
@@ -131,7 +139,9 @@ LRHI::FRHIWindow::~FRHIWindow () noexcept
 Lumina::TExpected<LRHI::FRHIWindow, LRHI::FRHIError> LRHI::FRHIWindow::Create ( const FRHIWindowDesc &InDesc )
 {
     LUMINA_TRY_EXPECT_ERROR( ValidateDesc( InDesc ) );
-    LUMINA_TRY_EXPECT_ERROR( EnsureGLFWInitialized() );
+
+    const Lumina::HAL::TLockGuard<Lumina::HAL::FPlatformMutex> Lock( GLFWStateMutex );
+    LUMINA_TRY_EXPECT_ERROR( EnsureGLFWInitializedLocked() );
 
     SetGLFWWindowHints( InDesc );
 
@@ -193,18 +203,19 @@ Lumina::Bool LRHI::FRHIWindow::IsValid () const noexcept
     return NativeWindow != nullptr;
 }
 
-Lumina::Maths::FVec2u LRHI::FRHIWindow::GetFramebufferSize () const noexcept
+Lumina::TOptional<Lumina::Maths::FVec2u> LRHI::FRHIWindow::GetFramebufferSize () const noexcept
 {
     if ( not IsValid() )
     {
-        return { 0U };
+        return {};
     }
 
     Int32 Width  = 0;
     Int32 Height = 0;
     glfwGetFramebufferSize( GetWindow( NativeWindow ), &Width, &Height );
 
-    return { static_cast<UInt32>( Width ), static_cast<UInt32>( Height ) };
+    return Lumina::TOptional<Lumina::Maths::FVec2u>(
+        Lumina::Maths::FVec2u( static_cast<UInt32>( Width ), static_cast<UInt32>( Height ) ) );
 }
 
 void LRHI::FRHIWindow::Reset () noexcept
@@ -214,6 +225,7 @@ void LRHI::FRHIWindow::Reset () noexcept
         return;
     }
 
+    const Lumina::HAL::TLockGuard<Lumina::HAL::FPlatformMutex> Lock( GLFWStateMutex );
     glfwDestroyWindow( GetWindow( NativeWindow ) );
     NativeWindow = nullptr;
 

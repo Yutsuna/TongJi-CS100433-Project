@@ -6,7 +6,9 @@
 #pragma once
 
 #include <Core/NonCopyable.hpp>
+#include <Templates/Array.hpp>
 #include <Templates/Expected.hpp>
+#include <Templates/Optional.hpp>
 #include <Templates/Vector.hpp>
 
 #include <Maths/Matrix.hpp>
@@ -59,7 +61,7 @@ namespace RHI
     };
 
     /**
-     * @class FRHIGraphicsPipeline
+     * @class FRHIPipeline
      * @brief Graphics pipeline for rendering with shaders and state.
      */
     class RHI_EXPORT FRHIPipeline : public FNonCopyable
@@ -90,16 +92,28 @@ namespace RHI
 
     private:
 
+        /**
+         * @struct FRHIUniformLocation
+         * @brief A cached uniform name and its resolved location, empty when the uniform is absent.
+         */
         struct FRHIUniformLocation
         {
             FString Name;
-            Int32 Location = -1;
+            TOptional<Int32> Location;
         };
 
-        [[nodiscard]] Int32 ResolveUniform ( FStringView InName ) noexcept;
+        /**
+         * NOTE: ResolveUniform is noexcept and runs on the hot path, so its cache is a fixed-capacity
+         * TArray plus a live count instead of a growing TVector. Once MaxUniformLocations entries are
+         * cached, further lookups return an empty TOptional rather than allocating.
+         */
+        static constexpr USize MaxUniformLocations = 64U;
 
-        UInt32 Program = 0U;
-        TVector<FRHIUniformLocation> UniformLocations;
+        [[nodiscard]] TOptional<Int32> ResolveUniform ( FStringView InName ) noexcept;
+
+        UInt32 Program          = 0U;
+        USize NumCachedUniforms = 0U;
+        TArray<FRHIUniformLocation, MaxUniformLocations> UniformLocations;
 
         friend class FRHICommandList;
     };
@@ -126,7 +140,7 @@ namespace RHI
         FRHIGraphicsPipeline ( UInt32 InProgram,
                                UInt32 InVertexArray,
                                const FRHIGraphicsState &InState,
-                               TSpan<const FRHIVertexBinding> InBindings );
+                               TSpan<const FRHIVertexBinding> InBindings ) noexcept;
 
     private:
 

@@ -20,7 +20,8 @@ Lumina::RHI::FRHIPipeline::FRHIPipeline ( const UInt32 InProgram ) noexcept : Pr
 }
 
 Lumina::RHI::FRHIPipeline::FRHIPipeline ( FRHIPipeline &&InOther ) noexcept
-    : Program( std::exchange( InOther.Program, 0U ) ), UniformLocations( std::move( InOther.UniformLocations ) )
+    : Program( std::exchange( InOther.Program, 0U ) ), NumCachedUniforms( std::exchange( InOther.NumCachedUniforms, 0U ) ),
+      UniformLocations( std::move( InOther.UniformLocations ) )
 {
     /* */
 }
@@ -30,8 +31,9 @@ Lumina::RHI::FRHIPipeline &Lumina::RHI::FRHIPipeline::operator=( FRHIPipeline &&
     if ( this != &InOther )
     {
         ResetProgram();
-        Program          = std::exchange( InOther.Program, 0U );
-        UniformLocations = std::move( InOther.UniformLocations );
+        Program           = std::exchange( InOther.Program, 0U );
+        NumCachedUniforms = std::exchange( InOther.NumCachedUniforms, 0U );
+        UniformLocations  = std::move( InOther.UniformLocations );
     }
     return *this;
 }
@@ -46,95 +48,98 @@ Lumina::Bool Lumina::RHI::FRHIPipeline::IsValid () const noexcept
     return Program != 0U;
 }
 
-Lumina::Int32 Lumina::RHI::FRHIPipeline::ResolveUniform ( const FStringView InName ) noexcept
+Lumina::TOptional<Lumina::Int32> Lumina::RHI::FRHIPipeline::ResolveUniform ( const FStringView InName ) noexcept
 {
-    auto *const Found = Algo::FindIf( UniformLocations, [InName] ( const FRHIUniformLocation &InEntry ) noexcept
+    auto *const End   = UniformLocations.begin() + NumCachedUniforms;
+    auto *const Found = Algo::FindIf( UniformLocations.begin(), End, [InName] ( const FRHIUniformLocation &InEntry ) noexcept
     {
         return InEntry.Name == InName;
     } );
-    if ( Found != nullptr )
+    if ( Found != End )
     {
         return Found->Location;
     }
 
-    const FString Name( InName );
+    if ( NumCachedUniforms >= MaxUniformLocations )
+    {
+        return {};
+    }
+
+    FString Name( InName );
     const Int32 Location = Internal::GetUniformLocation( Program, Name.c_str() );
 
-    UniformLocations.push_back( { .Name = Name, .Location = Location } );
-    return Location;
+    TOptional<Int32> CachedLocation;
+    if ( Location >= 0 )
+    {
+        CachedLocation.Emplace( Location );
+    }
+    UniformLocations[NumCachedUniforms] = { .Name = std::move( Name ), .Location = CachedLocation };
+    ++NumCachedUniforms;
+    return CachedLocation;
 }
 
 void Lumina::RHI::FRHIPipeline::SetUniform ( const FStringView InName, const Int32 InValue ) noexcept
 {
-    const Int32 Location = ResolveUniform( InName );
-    if ( Location >= 0 )
+    ResolveUniform( InName ).Inspect( [this, InValue] ( const Int32 InLocation ) noexcept
     {
-        Internal::ProgramUniform1i( Program, Location, InValue );
-    }
+        Internal::ProgramUniform1i( Program, InLocation, InValue );
+    } );
 }
 
 void Lumina::RHI::FRHIPipeline::SetUniform ( const FStringView InName, const UInt32 InValue ) noexcept
 {
-    const Int32 Location = ResolveUniform( InName );
-    if ( Location >= 0 )
+    ResolveUniform( InName ).Inspect( [this, InValue] ( const Int32 InLocation ) noexcept
     {
-        Internal::ProgramUniform1ui( Program, Location, InValue );
-    }
+        Internal::ProgramUniform1ui( Program, InLocation, InValue );
+    } );
 }
 
 void Lumina::RHI::FRHIPipeline::SetUniform ( const FStringView InName, const Float32 InValue ) noexcept
 {
-    const Int32 Location = ResolveUniform( InName );
-    if ( Location >= 0 )
+    ResolveUniform( InName ).Inspect( [this, InValue] ( const Int32 InLocation ) noexcept
     {
-        Internal::ProgramUniform1f( Program, Location, InValue );
-    }
+        Internal::ProgramUniform1f( Program, InLocation, InValue );
+    } );
 }
 
 void Lumina::RHI::FRHIPipeline::SetUniform ( const FStringView InName, const Maths::FVec2f &InValue ) noexcept
 {
-    const Int32 Location = ResolveUniform( InName );
-    if ( Location >= 0 )
+    ResolveUniform( InName ).Inspect( [this, &InValue] ( const Int32 InLocation ) noexcept
     {
-        Internal::ProgramUniform2f( Program, Location, InValue.X, InValue.Y );
-    }
+        Internal::ProgramUniform2f( Program, InLocation, InValue.X, InValue.Y );
+    } );
 }
 
 void Lumina::RHI::FRHIPipeline::SetUniform ( const FStringView InName, const Maths::FVec3f &InValue ) noexcept
 {
-    const Int32 Location = ResolveUniform( InName );
-    if ( Location >= 0 )
+    ResolveUniform( InName ).Inspect( [this, &InValue] ( const Int32 InLocation ) noexcept
     {
-        Internal::ProgramUniform3f( Program, Location, InValue.X, InValue.Y, InValue.Z );
-    }
+        Internal::ProgramUniform3f( Program, InLocation, InValue.X, InValue.Y, InValue.Z );
+    } );
 }
 
 void Lumina::RHI::FRHIPipeline::SetUniform ( const FStringView InName, const Maths::FVec4f &InValue ) noexcept
 {
-    const Int32 Location = ResolveUniform( InName );
-    if ( Location >= 0 )
+    ResolveUniform( InName ).Inspect( [this, &InValue] ( const Int32 InLocation ) noexcept
     {
-        Internal::ProgramUniform4f( Program, Location, InValue.X, InValue.Y, InValue.Z, InValue.W );
-    }
+        Internal::ProgramUniform4f( Program, InLocation, InValue.X, InValue.Y, InValue.Z, InValue.W );
+    } );
 }
 
 void Lumina::RHI::FRHIPipeline::SetUniform ( const FStringView InName, const Maths::FMat4x4f &InValue ) noexcept
 {
-    const Int32 Location = ResolveUniform( InName );
-    if ( Location < 0 )
+    ResolveUniform( InName ).Inspect( [this, &InValue] ( const Int32 InLocation ) noexcept
     {
-        return;
-    }
-
-    glm::mat4 Converted( 1.0F );
-    for ( USize Column = 0U; Column < 4U; ++Column )
-    {
-        for ( USize Row = 0U; Row < 4U; ++Row )
+        glm::mat4 Converted( 1.0F );
+        for ( USize Column = 0U; Column < 4U; ++Column )
         {
-            Converted[static_cast<glm::length_t>( Column )][static_cast<glm::length_t>( Row )] = InValue[Column].Data[Row];
+            for ( USize Row = 0U; Row < 4U; ++Row )
+            {
+                Converted[static_cast<glm::length_t>( Column )][static_cast<glm::length_t>( Row )] = InValue[Column].Data[Row];
+            }
         }
-    }
-    Internal::ProgramUniformMatrix4fv( Program, Location, 1, GL_FALSE, glm::value_ptr( Converted ) );
+        Internal::ProgramUniformMatrix4fv( Program, InLocation, 1, GL_FALSE, glm::value_ptr( Converted ) );
+    } );
 }
 
 void Lumina::RHI::FRHIPipeline::ResetProgram () noexcept
@@ -143,6 +148,6 @@ void Lumina::RHI::FRHIPipeline::ResetProgram () noexcept
     {
         Internal::DeleteProgram( Program );
     }
-    Program = 0U;
-    UniformLocations.clear();
+    Program           = 0U;
+    NumCachedUniforms = 0U;
 }
