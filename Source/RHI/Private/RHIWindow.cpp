@@ -30,7 +30,7 @@ Lumina::Bool bErrorCallbackSet = false;
 
 inline void OnGLFWError ( const Lumina::Int32 InCode, const Lumina::AnsiChar *InDescription ) noexcept
 {
-    LUMINA_LOG_ERROR( Lumina::RHI::Internal::LogRHI, "GLFW error {}: {}", InCode, InDescription );
+    LUMINA_LOG_ERROR( Internal::LogRHI, "GLFW error {}: {}", InCode, InDescription );
 }
 
 inline void EnsureErrorCallback () noexcept
@@ -52,15 +52,15 @@ ValidateDesc ( const Lumina::RHI::FRHIWindowDesc &InDesc ) noexcept
 {
     if ( InDesc.Size.X == 0U or InDesc.Size.Y == 0U ) [[unlikely]]
     {
-        return Lumina::MakeUnexpected( Lumina::RHI::Internal::MakeError( Lumina::RHI::ERHIErrorCode::InvalidArgument,
-                                                                         "Window dimensions must be non-zero" ) );
+        return Lumina::MakeUnexpected(
+            Internal::MakeError( Lumina::RHI::ERHIErrorCode::InvalidArgument, "Window dimensions must be non-zero" ) );
     }
 
     constexpr Lumina::UInt32 MaxDimension = static_cast<Lumina::UInt32>( std::numeric_limits<Lumina::Int32>::max() );
     if ( InDesc.Size.X > MaxDimension or InDesc.Size.Y > MaxDimension ) [[unlikely]]
     {
-        return Lumina::MakeUnexpected( Lumina::RHI::Internal::MakeError( Lumina::RHI::ERHIErrorCode::InvalidArgument,
-                                                                         "Window dimensions exceed GLFW limits" ) );
+        return Lumina::MakeUnexpected(
+            Internal::MakeError( Lumina::RHI::ERHIErrorCode::InvalidArgument, "Window dimensions exceed GLFW limits" ) );
     }
 
     return {};
@@ -73,7 +73,7 @@ ValidateDesc ( const Lumina::RHI::FRHIWindowDesc &InDesc ) noexcept
     if ( WindowCount == 0U and glfwInit() == GLFW_FALSE ) [[unlikely]]
     {
         return Lumina::MakeUnexpected(
-            Lumina::RHI::Internal::MakeError( Lumina::RHI::ERHIErrorCode::InitializationFailed, "glfwInit failed" ) );
+            Internal::MakeError( Lumina::RHI::ERHIErrorCode::InitializationFailed, "glfwInit failed" ) );
     }
     return {};
 }

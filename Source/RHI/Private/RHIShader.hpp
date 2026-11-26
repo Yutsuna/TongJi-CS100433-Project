@@ -5,8 +5,8 @@
 
 #pragma once
 
-#include <RHIExport.hpp>
 #include <RHI/RHITypes.hpp>
+#include <RHIExport.hpp>
 
 #include <Core/NonCopyable.hpp>
 
@@ -29,7 +29,7 @@ namespace RHI
         FRHIShader &operator=( FRHIShader &&InOther ) noexcept;
         ~FRHIShader () noexcept;
 
-        public:
+    public:
 
         [[nodiscard]] Bool IsValid () const noexcept;
         [[nodiscard]] ERHIShaderStage GetStage () const noexcept;
