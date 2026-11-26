@@ -3,17 +3,16 @@
   ...
 }:
 {
-  nativeBuildInputs =
-    with pkgs;
-    [
-      gcc16
-      meson
-      ninja
-      pkg-config
-    ]
-    ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
-      mold
-    ];
+  nativeBuildInputs = with pkgs; [
+    gcc16
+    ccache
+    meson
+    ninja
+    pkg-config
+  ] ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
+    mold
+    mesa
+  ];
 
   buildInputs = with pkgs; [
     glm
@@ -22,11 +21,13 @@
   ];
 
   devInputs = with pkgs; [
-    glslang
-    clang-tools
-    gdb
     valgrind
-    bear
-    mesa
+    gdb
+    clang-tools
+    jq
+    nil
+    nixd
+    muon
   ];
+
 }
