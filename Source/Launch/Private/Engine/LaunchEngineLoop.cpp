@@ -1,0 +1,134 @@
+/**
+ * @file LaunchEngineLoop.cpp
+ * @brief Launch::FLaunchEngineLoop implementation.
+ */
+
+#include <Engine/LaunchEngineConfig.hpp>
+#include <Engine/LaunchEngineConfigParser.hpp>
+#include <Engine/LaunchEngineLoop.hpp>
+#include <Engine/LaunchFrameTiming.hpp>
+
+#include <Core/CoreDefinitions.hpp>
+#include <Meta/SerializeToJSON.hpp>
+
+#include <Logging/Logger.hpp>
+
+#include <HAL/PlatformTime.hpp>
+
+/**
+ * Private
+ */
+
+namespace Lumina
+{
+
+namespace
+{
+
+    TAtomic<Bool> GExitRequested{ false };
+    static_assert( TAtomic<Bool>::is_always_lock_free, "Lock-free atomics are required to be async-signal-safe." );
+
+    LUMINA_LOG_DEFINE_CATEGORY( LogEngineLoop, "EngineLoop" );
+
+    void
+    RunEngineState ( Launch::FInitState &State, const Launch::FLaunchEngineConfig &Config, Launch::FFrameClock &Clock ) noexcept
+    {
+        const auto [DeltaSeconds, FixedSteps, Alpha] = Clock.BeginFrame();
+
+        for ( UInt32 Index = 0; Index < FixedSteps; ++Index )
+        {
+            State.Modules.FixedTick( Config.FixedStep );
+        }
+        State.Modules.Tick( DeltaSeconds, Alpha );
+    }
+
+} // namespace
+
+/**
+ * Public
+ */
+
+Launch::TLaunchResult<Launch::FPreInitState> Launch::FLaunchEngineLoop::PreInit ( const FCommandLine &InCommandLine ) noexcept
+{
+    /** INFO: Initialize the clock epoch now so that no later measurement pays for its lazy initialization. */
+    ( void )HAL::FPlatformTime::Seconds();
+
+    LUMINA_LOG_VERBOSE( LogEngineLoop, "Starting '{}' ({} arguments)", InCommandLine.GetProgramName(),
+                        InCommandLine.GetArguments().size() );
+
+    return ParseEngineConfig( InCommandLine )
+        .Transform( [&InCommandLine] ( FLaunchEngineConfig &&InConfig ) noexcept -> FPreInitState
+    {
+        const FPreInitState PreInitState = { .CommandLine = InCommandLine, .Config = std::move( InConfig ) };
+
+        LUMINA_LOG_DISPLAY( LogEngineLoop, "Launching engine with config:" LUMINA_NEWLINE "{}",
+                            Meta::SerializeToJSON( InConfig ) );
+
+        return PreInitState;
+    } );
+}
+
+Launch::TLaunchResult<Launch::FInitState> Launch::FLaunchEngineLoop::Init ( FPreInitState &&InPreInitState ) noexcept
+{
+    FInitState State;
+    State.Config = InPreInitState.Config;
+
+    LUMINA_LOG_INFO( LogEngineLoop, "Initializing engine modules..." );
+    LUMINA_EXPECT( Started, State.Modules.StartAll( GetEngineModules(), State.Config ) );
+    LUMINA_LOG_INFO( LogEngineLoop, "{} module(s) started", State.Modules.Num() );
+
+    return State;
+}
+
+Launch::TLaunchResult<Launch::FRunSummary> Launch::FLaunchEngineLoop::Run ( FInitState &&InInitState ) noexcept
+{
+    FInitState State = std::move( InInitState );
+
+    const FLaunchEngineConfig &Config = State.Config;
+
+    LUMINA_LOG_DISPLAY( LogEngineLoop, "Entering main loop..." );
+
+    FFrameClock Clock( Config.FixedStep, Config.MaxFrameTime );
+    FFrameLimiter Limiter( Config.MaxFPS );
+    UInt64 FrameCount = 0;
+
+    while ( not IsExitRequested() ) [[likely]]
+    {
+        RunEngineState( State, Config, Clock );
+
+        ++FrameCount;
+        if ( Config.MaxFrames != 0 and FrameCount >= Config.MaxFrames ) [[unlikely]]
+        {
+            break;
+        }
+
+        Limiter.Wait();
+    }
+
+    const FRunSummary RunSummary{
+        .FrameCount     = FrameCount,
+        .ElapsedSeconds = Clock.ElapsedSeconds(),
+        .bInterrupted   = IsExitRequested(),
+    };
+
+    LUMINA_LOG_INFO( LogEngineLoop, "Main loop exited." );
+    LUMINA_LOG_DISPLAY( LogEngineLoop, "Run summary:" LUMINA_NEWLINE "{}", Meta::SerializeToJSON( RunSummary ) );
+    return RunSummary;
+}
+
+Bool Launch::FLaunchEngineLoop::RequestExit () noexcept
+{
+    return GExitRequested.exchange( true, std::memory_order_acq_rel );
+}
+
+Bool Launch::FLaunchEngineLoop::IsExitRequested () noexcept
+{
+    return GExitRequested.load( std::memory_order_acquire );
+}
+
+void Launch::FLaunchEngineLoop::ResetExitRequest () noexcept
+{
+    GExitRequested.store( false, std::memory_order_release );
+}
+
+} // namespace Lumina

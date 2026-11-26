@@ -6,10 +6,8 @@
 ModuleDefinition = {
     'Name' : 'Launch',
     'Type' : 'Executable',
-    'OutputName' : 'Lumina',
     'SourceDir' : meson.current_source_dir(),
     'Private' : 'Private',
     'Public' : 'Public',
-    'Tests' : 'Tests',
-    'Depends' : ['Core', 'RHI']
+    'Depends' : ['Core']
 }

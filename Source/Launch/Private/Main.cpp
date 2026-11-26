@@ -1,12 +1,11 @@
 /**
  * @file Main.cpp
- * @brief Entry point of the application
+ * @brief App module entry-point.
  */
 
-#include <Core/CoreDefinitions.hpp>
-#include <Core/CoreTypes.hpp>
+#include <Engine/LaunchEngine.hpp>
 
-Lumina::Int32 main ( const Lumina::Int32 LUMINA_UNUSED Argc, const Lumina::AnsiChar LUMINA_UNUSED *const Argv[] ) noexcept
+Lumina::Int32 main ( const Lumina::Int32 Argc, const Lumina::AnsiChar *Argv[] )
 {
-    return LUMINA_EXIT_SUCCESS;
+    return Lumina::Launch::GuardedMain( Argc, Argv );
 }
