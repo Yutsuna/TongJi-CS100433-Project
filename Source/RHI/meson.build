@@ -11,5 +11,11 @@ ModuleDefinition = {
     'Private' : 'Private',
     'Public' : 'Public',
     'Tests' : 'Tests',
-    'Depends' : ['Core','Maths']
+    'Depends' : ['Core','Maths'],
+    'ExternalDeps' : [
+        dependency('glfw3'),
+        dependency('glm'),
+        dependency('gl'),
+    ],
+    'DebugEnvironmentFile' : 'lsan.supp',
 }

@@ -2,9 +2,31 @@
 # Source/Meson/Private/meson.build
 # Builds each module's target from its Private/ sources.
 #
-# Reads  : ModuleDefinitions, PublicIncludes, GlobalModules, ALL_WARNINGS
+# Reads  : ModuleDefinitions, PublicIncludes, GlobalModules, ALL_WARNINGS,
+#          DebugEnvironmentFile (optional module key)
 # Writes : GlobalModules, GlobalTestModules
 #}
+DebugEnvironmentFiles = []
+
+foreach ModuleDefinition : ModuleDefinitions
+    if ModuleDefinition.has_key('DebugEnvironmentFile')
+        DebugEnvironmentFiles += [
+            SourceRoot / ModuleDefinition.get('SourceDirRel') / ModuleDefinition.get('DebugEnvironmentFile')
+        ]
+    endif
+endforeach
+
+DebugEnvironmentSources = []
+
+if DebugEnvironmentFiles.length() > 0 and 'address' in get_option('b_sanitize').split(',')
+    DebugEnvironmentConfiguration = configuration_data()
+    DebugEnvironmentConfiguration.set('SUPPRESSIONS', ','.join(DebugEnvironmentFiles))
+    DebugEnvironmentSources += [configure_file(
+        input : meson.project_source_root() / 'Meson' / 'LSanEnvironment.cpp.in',
+        output : 'LSanEnvironment.cpp',
+        configuration : DebugEnvironmentConfiguration,
+    )]
+endif
 
 foreach ModuleDefinition : ModuleDefinitions
     ModuleName = ModuleDefinition.get('Name')
@@ -78,6 +100,8 @@ foreach ModuleDefinition : ModuleDefinitions
             MainSources = PrivateSources
             LibrarySources = []
         endif
+
+        MainSources += DebugEnvironmentSources
 
         if LibrarySources.length() > 0
             ModuleLibrary = static_library(
