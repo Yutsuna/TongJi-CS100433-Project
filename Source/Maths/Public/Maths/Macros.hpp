@@ -35,8 +35,12 @@ namespace Maths
 
     template <typename Type> static inline constexpr Type Epsilon = std::numeric_limits<Type>::epsilon();
 
-    [[nodiscard]] LUMINA_FORCE_INLINE Bool IsEqual ( Float32 Fa, Float32 Fb, const Float32 Tolerance = Epsilon<Float32> ) noexcept;
-    [[nodiscard]] LUMINA_FORCE_INLINE Bool IsEqual ( Float64 Fa, Float64 Fb, const Float64 Tolerance = Epsilon<Float64> ) noexcept;
+    [[nodiscard]] LUMINA_FORCE_INLINE Bool IsEqual ( Float32 Fa,
+                                                     Float32 Fb,
+                                                     const Float32 Tolerance = Epsilon<Float32> ) noexcept;
+    [[nodiscard]] LUMINA_FORCE_INLINE Bool IsEqual ( Float64 Fa,
+                                                     Float64 Fb,
+                                                     const Float64 Tolerance = Epsilon<Float64> ) noexcept;
 
 } // namespace Maths
 
