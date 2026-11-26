@@ -80,7 +80,8 @@ Lumina::HAL::TUniqueLock<TMutexType>::TUniqueLock( TUniqueLock<TMutexType> &&InO
 }
 
 template <class TMutexType>
-Lumina::HAL::TUniqueLock<TMutexType> &Lumina::HAL::TUniqueLock<TMutexType>::operator=( TUniqueLock<TMutexType> &&InOther ) noexcept
+Lumina::HAL::TUniqueLock<TMutexType> &
+Lumina::HAL::TUniqueLock<TMutexType>::operator=( TUniqueLock<TMutexType> &&InOther ) noexcept
 {
     if ( this != &InOther )
     {

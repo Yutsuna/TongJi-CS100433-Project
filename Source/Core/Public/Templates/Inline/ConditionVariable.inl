@@ -73,7 +73,8 @@ Lumina::Bool Lumina::FConditionVariable::WaitFor ( TLockType &InLock, Float64 In
 }
 
 template <Lumina::Concepts::CIsLockable TLockType, class TPredicate>
-Lumina::Bool Lumina::FConditionVariable::WaitFor ( TLockType &InLock, Float64 InTimeoutSeconds, TPredicate &&InPredicate ) noexcept
+Lumina::Bool
+Lumina::FConditionVariable::WaitFor ( TLockType &InLock, Float64 InTimeoutSeconds, TPredicate &&InPredicate ) noexcept
 {
     return WaitUntil( InLock, HAL::FPlatformTime::Seconds() + InTimeoutSeconds, std::forward<TPredicate>( InPredicate ) );
 }

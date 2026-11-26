@@ -83,12 +83,12 @@
 /* */
 
 #if defined( NDEBUG )
-    #define LUMINA_ASSERT( Condition )                                                                                            \
+    #define LUMINA_ASSERT( Condition )                                                                                           \
         do                                                                                                                       \
         {                                                                                                                        \
         } while ( false )
 #elif defined( LUMINA_COMPILER_CLANG ) or defined( LUMINA_COMPILER_GCC )
-    #define LUMINA_ASSERT( Condition )                                                                                            \
+    #define LUMINA_ASSERT( Condition )                                                                                           \
         do                                                                                                                       \
         {                                                                                                                        \
             if ( not( Condition ) ) [[unlikely]]                                                                                 \
@@ -97,7 +97,7 @@
             }                                                                                                                    \
         } while ( false )
 #elif defined( LUMINA_COMPILER_MSVC )
-    #define LUMINA_ASSERT( Condition )                                                                                            \
+    #define LUMINA_ASSERT( Condition )                                                                                           \
         do                                                                                                                       \
         {                                                                                                                        \
             if ( not( Condition ) ) [[unlikely]]                                                                                 \

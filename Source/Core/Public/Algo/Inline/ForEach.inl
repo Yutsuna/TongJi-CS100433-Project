@@ -15,8 +15,9 @@
  */
 
 template <typename TObject, typename TPredicate, typename TFunc>
-    requires( Lumina::Concepts::CConvertibleTo<Lumina::TInvokeResultT<TPredicate, Lumina::Algo::Internal::TRangeReferenceT<TObject>>,
-                                              Lumina::Bool> )
+    requires(
+        Lumina::Concepts::CConvertibleTo<Lumina::TInvokeResultT<TPredicate, Lumina::Algo::Internal::TRangeReferenceT<TObject>>,
+                                         Lumina::Bool> )
 constexpr void Lumina::Algo::ForEach ( TObject &&Object, TPredicate &&Predicate, TFunc &&Func )
 {
     /**
@@ -48,7 +49,7 @@ template <typename TObject, typename TFunc> constexpr void Lumina::Algo::ForEach
 template <typename TObject, typename TFunc>
     requires Lumina::Algo::Internal::CPointerReturnRange<TObject> &&
              Lumina::Concepts::CConvertibleTo<Lumina::TInvokeResultT<TFunc, Lumina::Algo::Internal::TRangeReferenceT<TObject>>,
-                                             Lumina::Bool>
+                                              Lumina::Bool>
 constexpr Lumina::Algo::Internal::TRangeElementPtr<TObject> Lumina::Algo::ForEachUntil ( TObject &&Object, TFunc &&Func )
 {
     auto &&Callable = std::forward<TFunc>( Func );
@@ -64,10 +65,11 @@ constexpr Lumina::Algo::Internal::TRangeElementPtr<TObject> Lumina::Algo::ForEac
 }
 
 template <typename TObject, typename TPredicate, typename TFunc>
-    requires( Lumina::Concepts::CConvertibleTo<Lumina::TInvokeResultT<TPredicate, Lumina::Algo::Internal::TRangeReferenceT<TObject>>,
-                                              Lumina::Bool> &&
-              Lumina::Concepts::CConvertibleTo<Lumina::TInvokeResultT<TFunc, Lumina::Algo::Internal::TRangeReferenceT<TObject>>,
-                                              Lumina::Bool> )
+    requires(
+        Lumina::Concepts::CConvertibleTo<Lumina::TInvokeResultT<TPredicate, Lumina::Algo::Internal::TRangeReferenceT<TObject>>,
+                                         Lumina::Bool> &&
+        Lumina::Concepts::CConvertibleTo<Lumina::TInvokeResultT<TFunc, Lumina::Algo::Internal::TRangeReferenceT<TObject>>,
+                                         Lumina::Bool> )
 constexpr Lumina::Bool Lumina::Algo::ForEachUntil ( TObject &&Object, TPredicate &&Predicate, TFunc &&Func )
 {
     auto &&Pred     = std::forward<TPredicate>( Predicate );

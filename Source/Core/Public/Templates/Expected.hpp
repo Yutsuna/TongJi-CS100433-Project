@@ -536,23 +536,23 @@ namespace Internal
 
 } // namespace Internal
 
-#define LUMINA_EXPECT( Var, Expr )                                                                                                \
+#define LUMINA_EXPECT( Var, Expr )                                                                                               \
     auto &&Var##_lumenExpected_ = ( Expr );                                                                                      \
     if ( not Var##_lumenExpected_ ) [[unlikely]]                                                                                 \
     {                                                                                                                            \
-        return Lumina::MakeUnexpected( std::forward<decltype( Var##_lumenExpected_ )>( Var##_lumenExpected_ ).Error() );          \
+        return Lumina::MakeUnexpected( std::forward<decltype( Var##_lumenExpected_ )>( Var##_lumenExpected_ ).Error() );         \
     }                                                                                                                            \
     [[maybe_unused]] auto &&Var =                                                                                                \
         Lumina::Internal::UnpackExpected( std::forward<decltype( Var##_lumenExpected_ )>( Var##_lumenExpected_ ) )
 
-#define LUMINA_TRY_EXPECT_ERROR( Expr )                                                                                           \
+#define LUMINA_TRY_EXPECT_ERROR( Expr )                                                                                          \
                                                                                                                                  \
     do                                                                                                                           \
     {                                                                                                                            \
         auto &&_lumenExpected_ = ( Expr );                                                                                       \
         if ( not _lumenExpected_ ) [[unlikely]]                                                                                  \
         {                                                                                                                        \
-            return Lumina::MakeUnexpected( std::forward<decltype( _lumenExpected_ )>( _lumenExpected_ ).Error() );                \
+            return Lumina::MakeUnexpected( std::forward<decltype( _lumenExpected_ )>( _lumenExpected_ ).Error() );               \
         }                                                                                                                        \
     } while ( false )
 

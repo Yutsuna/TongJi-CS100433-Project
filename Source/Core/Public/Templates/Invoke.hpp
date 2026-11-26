@@ -20,7 +20,7 @@ namespace Lumina
  */
 template <typename TFunc, typename... TArgs>
 LUMINA_FORCE_INLINE constexpr auto Invoke ( TFunc &&InFunc,
-                                           TArgs &&...InArgs ) noexcept( std::is_nothrow_invocable_v<TFunc, TArgs...> )
+                                            TArgs &&...InArgs ) noexcept( std::is_nothrow_invocable_v<TFunc, TArgs...> )
     -> decltype( std::invoke( std::forward<TFunc>( InFunc ), std::forward<TArgs>( InArgs )... ) );
 
 namespace Internal

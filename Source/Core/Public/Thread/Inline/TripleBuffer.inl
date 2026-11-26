@@ -36,9 +36,9 @@ constexpr Lumina::Bool Lumina::Thread::Internal::FBufferFlag::IsDirty ( FBufferF
 }
 
 constexpr Lumina::Thread::Internal::FBufferFlag::Type Lumina::Thread::Internal::FBufferFlag::Make ( FBufferFlag::Type ReaderIndex,
-                                                                                                  FBufferFlag::Type WriterIndex,
-                                                                                                  FBufferFlag::Type TempIndex,
-                                                                                                  Bool bIsDirty ) noexcept
+                                                                                                    FBufferFlag::Type WriterIndex,
+                                                                                                    FBufferFlag::Type TempIndex,
+                                                                                                    Bool bIsDirty ) noexcept
 {
     LUMINA_ASSERT( ReaderIndex < 3 );
     LUMINA_ASSERT( WriterIndex < 3 );

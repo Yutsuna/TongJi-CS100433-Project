@@ -55,9 +55,9 @@ void Lumina::Algo::MergeSort ( TRangeType &&InRange, TPredicate InPredicate ) no
 template <typename TIterator, typename TPredicate>
 /** NOLINTNEXTLINE(misc-no-recursion) */
 void Lumina::Algo::Internal::MergeSortRecurse ( TIterator InFirst,
-                                               TIterator InLast,
-                                               std::iter_value_t<TIterator> *InBuffer,
-                                               TPredicate &InPredicate ) noexcept
+                                                TIterator InLast,
+                                                std::iter_value_t<TIterator> *InBuffer,
+                                                TPredicate &InPredicate ) noexcept
 {
     using FDifference               = std::iter_difference_t<TIterator>;
     constexpr FDifference Threshold = static_cast<FDifference>( InsertionSortThreshold );
@@ -85,10 +85,10 @@ void Lumina::Algo::Internal::MergeSortRecurse ( TIterator InFirst,
 
 template <typename TIterator, typename TPredicate>
 void Lumina::Algo::Internal::MergeRuns ( TIterator InFirst,
-                                        TIterator InMiddle,
-                                        TIterator InLast,
-                                        std::iter_value_t<TIterator> *InBuffer,
-                                        TPredicate &InPredicate ) noexcept
+                                         TIterator InMiddle,
+                                         TIterator InLast,
+                                         std::iter_value_t<TIterator> *InBuffer,
+                                         TPredicate &InPredicate ) noexcept
 {
     using FValue = std::iter_value_t<TIterator>;
 

@@ -49,7 +49,9 @@ constexpr Lumina::Int32 PopLowestBit ( Lumina::UInt64 &InOutMask ) noexcept
 using FOSHandler = void ( * )( Lumina::Int32 );
 
 #if defined( LUMINA_PLATFORM_UNIX )
-void InstallSignalAction ( const Lumina::Int32 InOSCode, void ( *InHandler )( Lumina::Int32 ), const Lumina::Int32 InFlags ) noexcept
+void InstallSignalAction ( const Lumina::Int32 InOSCode,
+                           void ( *InHandler )( Lumina::Int32 ),
+                           const Lumina::Int32 InFlags ) noexcept
 {
     struct sigaction Action = {};
     Action.sa_handler       = InHandler;

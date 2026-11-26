@@ -7,7 +7,7 @@
 
 #include "CoreTypes.hpp"
 
-#define LUMINA_ENUM_FLAGS( EnumType )                                                                                             \
+#define LUMINA_ENUM_FLAGS( EnumType )                                                                                            \
     [[nodiscard]] constexpr inline EnumType operator|( EnumType Lhs, EnumType Rhs ) noexcept                                     \
     {                                                                                                                            \
         using UnderlyingType = std::underlying_type_t<EnumType>;                                                                 \

@@ -95,9 +95,9 @@ void Lumina::Algo::Internal::MoveMedianToFirst ( TIterator InFirst, TIterator In
 
 template <typename TIterator, typename TPredicate>
 TIterator Lumina::Algo::Internal::MedianOfThree ( TIterator InFirst,
-                                                 TIterator InSecond,
-                                                 TIterator InThird,
-                                                 TPredicate &InPredicate ) noexcept
+                                                  TIterator InSecond,
+                                                  TIterator InThird,
+                                                  TPredicate &InPredicate ) noexcept
 {
     if ( InPredicate( *InFirst, *InSecond ) )
     {
@@ -117,9 +117,9 @@ TIterator Lumina::Algo::Internal::MedianOfThree ( TIterator InFirst,
 
 template <typename TIterator, typename TPredicate>
 TIterator Lumina::Algo::Internal::UnguardedPartition ( TIterator InLeft,
-                                                      TIterator InRight,
-                                                      TIterator InPivot,
-                                                      TPredicate &InPredicate ) noexcept
+                                                       TIterator InRight,
+                                                       TIterator InPivot,
+                                                       TPredicate &InPredicate ) noexcept
 {
     using FValue = std::iter_value_t<TIterator>;
 

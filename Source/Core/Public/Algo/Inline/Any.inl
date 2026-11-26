@@ -14,8 +14,9 @@
  */
 
 template <typename TObject, typename TPredicate>
-    requires( Lumina::Concepts::CConvertibleTo<Lumina::TInvokeResultT<TPredicate, Lumina::Algo::Internal::TRangeReferenceT<TObject>>,
-                                              Lumina::Bool> )
+    requires(
+        Lumina::Concepts::CConvertibleTo<Lumina::TInvokeResultT<TPredicate, Lumina::Algo::Internal::TRangeReferenceT<TObject>>,
+                                         Lumina::Bool> )
 constexpr Lumina::Bool Lumina::Algo::AnyOf ( TObject &&Object, TPredicate &&Predicate )
 {
     auto &&Pred = std::forward<TPredicate>( Predicate );

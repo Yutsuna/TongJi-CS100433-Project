@@ -68,10 +68,10 @@ void Lumina::Algo::HeapSort ( TRangeType &&InRange, TPredicate InPredicate ) noe
 
 template <typename TIterator, typename TPredicate>
 void Lumina::Algo::Internal::SiftDown ( TIterator InFirst,
-                                       std::iter_difference_t<TIterator> InHole,
-                                       std::iter_difference_t<TIterator> InCount,
-                                       std::iter_value_t<TIterator> InValue,
-                                       TPredicate &InPredicate ) noexcept
+                                        std::iter_difference_t<TIterator> InHole,
+                                        std::iter_difference_t<TIterator> InCount,
+                                        std::iter_value_t<TIterator> InValue,
+                                        TPredicate &InPredicate ) noexcept
 {
     using FDifference = std::iter_difference_t<TIterator>;
 

@@ -15,9 +15,9 @@
 
 template <typename TRangeA, typename TRangeB, typename TPredicate>
     requires( Lumina::Concepts::CConvertibleTo<Lumina::TInvokeResultT<TPredicate,
-                                                                    Lumina::Algo::Internal::TRangeReferenceT<TRangeA>,
-                                                                    Lumina::Algo::Internal::TRangeReferenceT<TRangeB>>,
-                                              Lumina::Bool> )
+                                                                      Lumina::Algo::Internal::TRangeReferenceT<TRangeA>,
+                                                                      Lumina::Algo::Internal::TRangeReferenceT<TRangeB>>,
+                                               Lumina::Bool> )
 constexpr Lumina::Bool Lumina::Algo::Equal ( TRangeA &&InRangeA, TRangeB &&InRangeB, TPredicate &&InPredicate )
 {
     auto &&Pred = std::forward<TPredicate>( InPredicate );
@@ -37,7 +37,8 @@ constexpr Lumina::Bool Lumina::Algo::Equal ( TRangeA &&InRangeA, TRangeB &&InRan
     return ItA == EndA and ItB == EndB;
 }
 
-template <typename TRangeA, typename TRangeB> constexpr Lumina::Bool Lumina::Algo::Equal ( TRangeA &&InRangeA, TRangeB &&InRangeB )
+template <typename TRangeA, typename TRangeB>
+constexpr Lumina::Bool Lumina::Algo::Equal ( TRangeA &&InRangeA, TRangeB &&InRangeB )
 {
     return Equal( std::forward<TRangeA>( InRangeA ), std::forward<TRangeB>( InRangeB ),
                   [] ( auto &&A, auto &&B ) noexcept -> Lumina::Bool
