@@ -27,7 +27,7 @@ namespace Filesystem
         ReadWrite = Read | Write
     };
 
-    LUMEN_ENUM_FLAGS( EFileAccess )
+    LUMINA_ENUM_FLAGS( EFileAccess )
 
     /**
      * @enum EFileMode

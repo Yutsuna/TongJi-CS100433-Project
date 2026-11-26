@@ -15,7 +15,7 @@
 #include <Templates/Function.hpp>
 #include <Templates/Vector.hpp>
 
-#if not defined( LUMEN_PLATFORM_WINDOWS )
+#if not defined( LUMINA_PLATFORM_WINDOWS )
 #else
 
 extern "C"

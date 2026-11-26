@@ -5,7 +5,7 @@
 
 #include <Core/CoreDefinitions.hpp>
 
-#if defined( LUMEN_PLATFORM_UNIX )
+#if defined( LUMINA_PLATFORM_UNIX )
 
     #include <HAL/Unix/UnixTime.hpp>
 

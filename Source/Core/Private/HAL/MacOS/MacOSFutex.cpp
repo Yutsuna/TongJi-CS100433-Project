@@ -5,7 +5,7 @@
 
 #include <Core/CoreDefinitions.hpp>
 
-#if defined( LUMEN_PLATFORM_MACOS )
+#if defined( LUMINA_PLATFORM_MACOS )
 
     #include <HAL/MacOS/MacOSFutex.hpp>
 
@@ -25,7 +25,8 @@ void Lumina::HAL::FMacOSFutex::Wait ( TAtomic<UInt32> &InAddress, UInt32 InExpec
     static_cast<void>( os_sync_wait_on_address( Raw( InAddress ), InExpected, sizeof( UInt32 ), OS_SYNC_WAIT_ON_ADDRESS_NONE ) );
 }
 
-Lumina::Bool Lumina::HAL::FMacOSFutex::WaitFor ( TAtomic<UInt32> &InAddress, UInt32 InExpected, Float64 InTimeoutSeconds ) noexcept
+Lumina::Bool
+Lumina::HAL::FMacOSFutex::WaitFor ( TAtomic<UInt32> &InAddress, UInt32 InExpected, Float64 InTimeoutSeconds ) noexcept
 {
     const UInt64 Nanoseconds = static_cast<UInt64>( ClampTimeout( InTimeoutSeconds ) * 1.0e9 );
 

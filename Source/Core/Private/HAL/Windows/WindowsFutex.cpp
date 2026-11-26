@@ -5,7 +5,7 @@
 
 #include <Core/CoreDefinitions.hpp>
 
-#if defined( LUMEN_PLATFORM_WINDOWS )
+#if defined( LUMINA_PLATFORM_WINDOWS )
 
 extern "C"
 {
@@ -18,9 +18,9 @@ extern "C"
     #include <windows.h>
 }
 
-    #if defined( LUMEN_COMPILER_MSVC )
+    #if defined( LUMINA_COMPILER_MSVC )
         #pragma comment( lib, "Synchronization.lib" )
-    #elif defined( LUMEN_COMPILER_CLANG )
+    #elif defined( LUMINA_COMPILER_CLANG )
         #warning "WindowsFutex.cpp: clang: link with -lsynchronization"
     #endif
 

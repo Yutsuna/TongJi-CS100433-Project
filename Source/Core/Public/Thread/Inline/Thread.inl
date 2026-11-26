@@ -36,7 +36,7 @@ namespace Internal
             /* */
         }
 
-#if defined( LUMEN_PLATFORM_WINDOWS )
+#if defined( LUMINA_PLATFORM_WINDOWS )
         static DWORD WINAPI Entry ( void *InData ) noexcept
 #else
         static void *Entry ( void *InData ) noexcept
@@ -44,7 +44,7 @@ namespace Internal
         {
             TUniquePtr<TThreadData> Data( static_cast<TThreadData *>( InData ) );
             Data->Run();
-#if defined( LUMEN_PLATFORM_WINDOWS )
+#if defined( LUMINA_PLATFORM_WINDOWS )
             return 0;
 #else
             return nullptr;
@@ -58,7 +58,7 @@ namespace Internal
             RunSequence( std::index_sequence_for<TArgs...>{} );
         }
 
-        template <USize... Indices> void RunSequence ( std::index_sequence<Indices...> LUMEN_UNUSED InSequence ) noexcept
+        template <USize... Indices> void RunSequence ( std::index_sequence<Indices...> LUMINA_UNUSED InSequence ) noexcept
         {
             if constexpr ( Concepts::CIsInvocable<TFunction, FStopToken, TArgs...> )
             {

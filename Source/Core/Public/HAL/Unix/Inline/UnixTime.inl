@@ -5,8 +5,8 @@
 
 #pragma once
 
-#if not defined( LUMEN_PLATFORM_UNIX )
-    #if not defined( LUMEN_CLANG_TIDY )
+#if not defined( LUMINA_PLATFORM_UNIX )
+    #if not defined( LUMINA_CLANG_TIDY )
         #error "UnixTime.hpp is only supported on Unix-like platforms"
     #endif
 #else
@@ -24,9 +24,9 @@ extern "C"
 
 Lumina::UInt64 Lumina::HAL::FUnixTime::Ticks () noexcept
 {
-    #if defined( LUMEN_PLATFORM_APPLE )
+    #if defined( LUMINA_PLATFORM_APPLE )
     return static_cast<UInt64>( ::clock_gettime_nsec_np( CLOCK_UPTIME_RAW ) );
-    #elif defined( LUMEN_PLATFORM_LINUX )
+    #elif defined( LUMINA_PLATFORM_LINUX )
     timespec Time{};
     ::clock_gettime( CLOCK_MONOTONIC, &Time );
     return ( static_cast<UInt64>( Time.tv_sec ) * NanosecondsPerSecond ) + static_cast<UInt64>( Time.tv_nsec );

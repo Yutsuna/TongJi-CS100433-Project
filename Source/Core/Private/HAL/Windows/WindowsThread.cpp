@@ -5,7 +5,7 @@
 
 #include <Core/CoreDefinitions.hpp>
 
-#if defined( LUMEN_PLATFORM_WINDOWS )
+#if defined( LUMINA_PLATFORM_WINDOWS )
 
     #include <HAL/Windows/WindowsThread.hpp>
 

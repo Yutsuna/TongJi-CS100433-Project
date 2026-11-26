@@ -32,7 +32,7 @@ namespace Algo
         requires( Concepts::CConvertibleTo<
                   TInvokeResultT<TPredicate, Internal::TRangeReferenceT<TRangeA>, Internal::TRangeReferenceT<TRangeB>>,
                   Bool> )
-    [[nodiscard]] LUMEN_FORCE_INLINE constexpr Bool Equal ( TRangeA &&InRangeA, TRangeB &&InRangeB, TPredicate &&InPredicate );
+    [[nodiscard]] LUMINA_FORCE_INLINE constexpr Bool Equal ( TRangeA &&InRangeA, TRangeB &&InRangeB, TPredicate &&InPredicate );
 
     /**
      * @brief Returns true if the two ranges contain equal elements in the same order (`operator==`).
@@ -41,7 +41,7 @@ namespace Algo
      * @param InRangeB The second range to compare.
      */
     template <typename TRangeA, typename TRangeB>
-    [[nodiscard]] LUMEN_FORCE_INLINE constexpr Bool Equal ( TRangeA &&InRangeA, TRangeB &&InRangeB );
+    [[nodiscard]] LUMINA_FORCE_INLINE constexpr Bool Equal ( TRangeA &&InRangeA, TRangeB &&InRangeB );
 
 } // namespace Algo
 

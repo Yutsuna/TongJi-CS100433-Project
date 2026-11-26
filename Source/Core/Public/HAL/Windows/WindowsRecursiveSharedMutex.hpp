@@ -7,8 +7,8 @@
 
 #include <Core/CoreDefinitions.hpp>
 
-#if not defined( LUMEN_PLATFORM_WINDOWS )
-    #if not defined( LUMEN_CLANG_TIDY )
+#if not defined( LUMINA_PLATFORM_WINDOWS )
+    #if not defined( LUMINA_CLANG_TIDY )
         #error "WindowsRecursiveSharedMutex.hpp is only supported on Windows"
     #endif
 #else
@@ -42,14 +42,14 @@ namespace HAL
     {
     public:
 
-        LUMEN_FORCE_INLINE FWindowsRecursiveSharedMutex () noexcept;
-        LUMEN_FORCE_INLINE ~FWindowsRecursiveSharedMutex() noexcept;
+        LUMINA_FORCE_INLINE FWindowsRecursiveSharedMutex () noexcept;
+        LUMINA_FORCE_INLINE ~FWindowsRecursiveSharedMutex() noexcept;
 
     public:
 
-        LUMEN_FORCE_INLINE void Lock () noexcept;
-        LUMEN_FORCE_INLINE void Unlock () noexcept;
-        LUMEN_FORCE_INLINE [[nodiscard]] Bool TryLock () noexcept;
+        LUMINA_FORCE_INLINE void Lock () noexcept;
+        LUMINA_FORCE_INLINE void Unlock () noexcept;
+        LUMINA_FORCE_INLINE [[nodiscard]] Bool TryLock () noexcept;
 
     private:
 

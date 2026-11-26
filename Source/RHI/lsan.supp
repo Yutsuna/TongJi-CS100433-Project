@@ -1,0 +1,13 @@
+# Mesa 26.2.6 (llvmpipe behind GLFW's EGL/Wayland path) keeps two one-time
+# caches in libgallium: get_cpu_topology() allocates the CPU topology mask
+# during eglInitialize(), and u_mmInit() allocates the JIT allocator state
+# on the first glDrawArrays(). GLFW's glfwTerminate() dlclose()s libEGL and
+# libgallium, so LSan loses the owning globals and reports these still-live
+# blocks as leaks. No Lumina allocation is involved; all RHI RAII wrappers
+# release their objects before the window is destroyed.
+#
+# The allocation stacks are only symbolized through the surviving GLFW frame
+# (_glfwInitEGL) and the Lumina call site (FRHICommandList::Draw). Mesa's own
+# frames are in unloaded modules and cannot be matched by LSan.
+leak:_glfwInitEGL
+leak:FRHICommandList::Draw

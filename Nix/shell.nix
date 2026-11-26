@@ -4,7 +4,9 @@
 }:
 let
   deps = import ./deps.nix { inherit pkgs; };
-  ldLibraryPath = pkgs.lib.makeLibraryPath deps.buildInputs;
+  ldLibraryPath =
+    with pkgs;
+    lib.makeLibraryPath (deps.buildInputs ++ lib.optionals stdenv.hostPlatform.isLinux [ mesa ]);
 in
 pkgs.mkShell {
   inherit (deps) nativeBuildInputs buildInputs;

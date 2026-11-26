@@ -14,7 +14,7 @@
  * Notify
  */
 
-LUMEN_FORCE_INLINE void Lumina::FConditionVariable::NotifyOne () noexcept
+LUMINA_FORCE_INLINE void Lumina::FConditionVariable::NotifyOne () noexcept
 {
     /**
      * INFO: Relaxed is enough: the caller's mutex orders the state change, and the futex word only
@@ -24,7 +24,7 @@ LUMEN_FORCE_INLINE void Lumina::FConditionVariable::NotifyOne () noexcept
     HAL::FPlatformFutex::WakeOne( Sequence );
 }
 
-LUMEN_FORCE_INLINE void Lumina::FConditionVariable::NotifyAll () noexcept
+LUMINA_FORCE_INLINE void Lumina::FConditionVariable::NotifyAll () noexcept
 {
     Sequence.fetch_add( 1U, std::memory_order::relaxed );
     HAL::FPlatformFutex::WakeAll( Sequence );
@@ -73,7 +73,8 @@ Lumina::Bool Lumina::FConditionVariable::WaitFor ( TLockType &InLock, Float64 In
 }
 
 template <Lumina::Concepts::CIsLockable TLockType, class TPredicate>
-Lumina::Bool Lumina::FConditionVariable::WaitFor ( TLockType &InLock, Float64 InTimeoutSeconds, TPredicate &&InPredicate ) noexcept
+Lumina::Bool
+Lumina::FConditionVariable::WaitFor ( TLockType &InLock, Float64 InTimeoutSeconds, TPredicate &&InPredicate ) noexcept
 {
     return WaitUntil( InLock, HAL::FPlatformTime::Seconds() + InTimeoutSeconds, std::forward<TPredicate>( InPredicate ) );
 }

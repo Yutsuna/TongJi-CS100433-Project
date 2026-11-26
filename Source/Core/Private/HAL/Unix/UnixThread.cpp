@@ -5,7 +5,7 @@
 
 #include <Core/CoreDefinitions.hpp>
 
-#if defined( LUMEN_PLATFORM_UNIX )
+#if defined( LUMINA_PLATFORM_UNIX )
 
     #include <HAL/Unix/UnixThread.hpp>
 
@@ -16,6 +16,7 @@
 
 Lumina::HAL::FUnixThread::FId::FId ( pthread_t InId ) noexcept : Value( InId ), bValid( true )
 {
+    /* */
 }
 
 Lumina::Bool Lumina::HAL::FUnixThread::FId::IsValid () const noexcept
@@ -28,7 +29,8 @@ Lumina::Bool Lumina::HAL::FUnixThread::FId::operator==( const FId &InOther ) con
     return bValid == InOther.bValid && ( not bValid || pthread_equal( Value, InOther.Value ) != 0 );
 }
 
-Lumina::HAL::FUnixThread::FUnixThread ( FUnixThread &&InOther ) noexcept : Thread( InOther.Thread ), bJoinable( InOther.bJoinable )
+Lumina::HAL::FUnixThread::FUnixThread ( FUnixThread &&InOther ) noexcept
+    : Thread( InOther.Thread ), bJoinable( InOther.bJoinable )
 {
     InOther.Thread    = pthread_t{};
     InOther.bJoinable = false;

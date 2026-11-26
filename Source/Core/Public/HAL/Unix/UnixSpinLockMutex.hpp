@@ -7,8 +7,8 @@
 
 #include <Core/CoreDefinitions.hpp>
 
-#if not defined( LUMEN_PLATFORM_UNIX )
-    #if not defined( LUMEN_CLANG_TIDY )
+#if not defined( LUMINA_PLATFORM_UNIX )
+    #if not defined( LUMINA_CLANG_TIDY )
         #error "FUnixSpinLockMutex.hpp is only available on Unix platforms."
     #endif
 #else
@@ -32,11 +32,11 @@ namespace HAL
 
     public:
 
-        LUMEN_FORCE_INLINE void Lock () noexcept;
-        LUMEN_FORCE_INLINE void Unlock () noexcept;
+        LUMINA_FORCE_INLINE void Lock () noexcept;
+        LUMINA_FORCE_INLINE void Unlock () noexcept;
 
-        [[nodiscard]] LUMEN_FORCE_INLINE Bool TryLock () noexcept;
-        [[nodiscard]] LUMEN_FORCE_INLINE Bool IsLocked () const noexcept;
+        [[nodiscard]] LUMINA_FORCE_INLINE Bool TryLock () noexcept;
+        [[nodiscard]] LUMINA_FORCE_INLINE Bool IsLocked () const noexcept;
 
     private:
 

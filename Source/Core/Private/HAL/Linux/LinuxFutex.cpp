@@ -5,7 +5,7 @@
 
 #include <Core/CoreDefinitions.hpp>
 
-#if defined( LUMEN_PLATFORM_LINUX )
+#if defined( LUMINA_PLATFORM_LINUX )
 
     #include <HAL/Linux/LinuxFutex.hpp>
 
@@ -31,7 +31,8 @@ void Lumina::HAL::FLinuxFutex::Wait ( TAtomic<UInt32> &InAddress, UInt32 InExpec
     static_cast<void>( ::syscall( SYS_futex, Raw( InAddress ), FUTEX_WAIT_PRIVATE, InExpected, nullptr, nullptr, 0 ) );
 }
 
-Lumina::Bool Lumina::HAL::FLinuxFutex::WaitFor ( TAtomic<UInt32> &InAddress, UInt32 InExpected, Float64 InTimeoutSeconds ) noexcept
+Lumina::Bool
+Lumina::HAL::FLinuxFutex::WaitFor ( TAtomic<UInt32> &InAddress, UInt32 InExpected, Float64 InTimeoutSeconds ) noexcept
 {
     const Float64 Clamped = ClampTimeout( InTimeoutSeconds );
     const Float64 Whole   = std::floor( Clamped );

@@ -11,5 +11,5 @@ ModuleDefinition = {
     'Private' : 'Private',
     'Public' : 'Public',
     'Tests' : 'Tests',
-    'Depends' : ['Core']
+    'Depends' : ['Core', 'RHI']
 }

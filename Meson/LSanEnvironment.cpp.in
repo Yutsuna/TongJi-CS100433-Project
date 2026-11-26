@@ -1,0 +1,9 @@
+/**
+ * @file LSanEnvironment.cpp.in
+ * @brief Generated LeakSanitizer defaults from module-declared debug files.
+ */
+
+extern "C" __attribute__( ( visibility( "default" ) ) ) const char *__lsan_default_options ()
+{
+    return "suppressions=@SUPPRESSIONS@:print_suppressions=1";
+}

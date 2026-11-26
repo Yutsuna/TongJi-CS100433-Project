@@ -11,7 +11,7 @@
 
 #include <Core/CoreDefinitions.hpp>
 
-#if defined( LUMEN_PLATFORM_UNIX )
+#if defined( LUMINA_PLATFORM_UNIX )
     #include <HAL/Unix/UnixThread.hpp>
 
 namespace Lumina
@@ -22,7 +22,7 @@ namespace HAL
 } // namespace HAL
 } // namespace Lumina
 
-#elif defined( LUMEN_PLATFORM_WINDOWS )
+#elif defined( LUMINA_PLATFORM_WINDOWS )
     #include <HAL/Windows/WindowsThread.hpp>
 
 namespace Lumina

@@ -7,8 +7,8 @@
 
 #include <Core/CoreDefinitions.hpp>
 
-#if not defined( LUMEN_PLATFORM_WINDOWS )
-    #if not defined( LUMEN_CLANG_TIDY )
+#if not defined( LUMINA_PLATFORM_WINDOWS )
+    #if not defined( LUMINA_CLANG_TIDY )
         #error "WindowsSharedMutex.hpp is only supported on Windows"
     #endif
 #else
@@ -48,13 +48,13 @@ namespace HAL
 
     public:
 
-        LUMEN_FORCE_INLINE void Lock () noexcept;
-        LUMEN_FORCE_INLINE void Unlock () noexcept;
-        LUMEN_FORCE_INLINE void LockShared () noexcept;
-        LUMEN_FORCE_INLINE void UnlockShared () noexcept;
+        LUMINA_FORCE_INLINE void Lock () noexcept;
+        LUMINA_FORCE_INLINE void Unlock () noexcept;
+        LUMINA_FORCE_INLINE void LockShared () noexcept;
+        LUMINA_FORCE_INLINE void UnlockShared () noexcept;
 
-        [[nodiscard]] LUMEN_FORCE_INLINE Bool TryLock () noexcept;
-        [[nodiscard]] LUMEN_FORCE_INLINE Bool TryLockShared () noexcept;
+        [[nodiscard]] LUMINA_FORCE_INLINE Bool TryLock () noexcept;
+        [[nodiscard]] LUMINA_FORCE_INLINE Bool TryLockShared () noexcept;
 
     private:
 

@@ -30,7 +30,7 @@ class CORE_EXPORT FAtomicBitset final
 public:
 
     FAtomicBitset () noexcept = default;
-    LUMEN_FORCE_INLINE explicit FAtomicBitset( USize InNumBits );
+    LUMINA_FORCE_INLINE explicit FAtomicBitset( USize InNumBits );
 
 public:
 
@@ -38,13 +38,13 @@ public:
     void Resize ( USize InNumBits );
 
     /** @brief Sets the bit at the specified index atomically. Thread-safe. */
-    LUMEN_FORCE_INLINE void Set ( USize InIndex ) noexcept;
+    LUMINA_FORCE_INLINE void Set ( USize InIndex ) noexcept;
 
     /** @brief Clears the bit at the specified index atomically. Thread-safe. */
-    LUMEN_FORCE_INLINE void Clear ( USize InIndex ) noexcept;
+    LUMINA_FORCE_INLINE void Clear ( USize InIndex ) noexcept;
 
     /** @brief Tests if the bit at the specified index is set. Thread-safe. */
-    [[nodiscard]] LUMEN_FORCE_INLINE Bool Test ( USize InIndex ) const noexcept;
+    [[nodiscard]] LUMINA_FORCE_INLINE Bool Test ( USize InIndex ) const noexcept;
 
 public:
 
@@ -57,10 +57,10 @@ public:
     void ForEachSetBitAndClear ( Callable &&InFunc ) noexcept;
 
     /** @brief Clears all bits in the bitset. */
-    LUMEN_FORCE_INLINE void ClearAll () noexcept;
+    LUMINA_FORCE_INLINE void ClearAll () noexcept;
 
     /** @return The number of bits the bitset was sized for. */
-    [[nodiscard]] LUMEN_FORCE_INLINE USize GetNumBits () const noexcept;
+    [[nodiscard]] LUMINA_FORCE_INLINE USize GetNumBits () const noexcept;
 
 private:
 

@@ -28,7 +28,7 @@ namespace Algo
      */
     template <typename TObject, typename TPredicate, typename TFunc>
         requires( Concepts::CConvertibleTo<TInvokeResultT<TPredicate, Internal::TRangeReferenceT<TObject>>, Bool> )
-    LUMEN_FORCE_INLINE constexpr void ForEach ( TObject &&Object, TPredicate &&Predicate, TFunc &&Func );
+    LUMINA_FORCE_INLINE constexpr void ForEach ( TObject &&Object, TPredicate &&Predicate, TFunc &&Func );
 
     /**
      * @brief Applies a function to each element in a range.
@@ -36,7 +36,7 @@ namespace Algo
      * @param Object The range to iterate over.
      * @param Func The function to apply to each element.
      */
-    template <typename TObject, typename TFunc> LUMEN_FORCE_INLINE constexpr void ForEach ( TObject &&Object, TFunc &&Func );
+    template <typename TObject, typename TFunc> LUMINA_FORCE_INLINE constexpr void ForEach ( TObject &&Object, TFunc &&Func );
 
     /**
      * @brief Iterates until Func returns true and returns the matching element.
@@ -49,7 +49,7 @@ namespace Algo
     template <typename TObject, typename TFunc>
         requires Internal::CPointerReturnRange<TObject> &&
                  Concepts::CConvertibleTo<TInvokeResultT<TFunc, Internal::TRangeReferenceT<TObject>>, Bool>
-    LUMEN_FORCE_INLINE constexpr Internal::TRangeElementPtr<TObject> ForEachUntil ( TObject &&Object, TFunc &&Func );
+    LUMINA_FORCE_INLINE constexpr Internal::TRangeElementPtr<TObject> ForEachUntil ( TObject &&Object, TFunc &&Func );
 
     /**
      * @brief Applies Func to each element satisfying Predicate, stopping early.
@@ -62,7 +62,7 @@ namespace Algo
     template <typename TObject, typename TPredicate, typename TFunc>
         requires( Concepts::CConvertibleTo<TInvokeResultT<TPredicate, Internal::TRangeReferenceT<TObject>>, Bool> &&
                   Concepts::CConvertibleTo<TInvokeResultT<TFunc, Internal::TRangeReferenceT<TObject>>, Bool> )
-    LUMEN_FORCE_INLINE constexpr Bool ForEachUntil ( TObject &&Object, TPredicate &&Predicate, TFunc &&Func );
+    LUMINA_FORCE_INLINE constexpr Bool ForEachUntil ( TObject &&Object, TPredicate &&Predicate, TFunc &&Func );
 
 } // namespace Algo
 

@@ -9,6 +9,7 @@ ModuleNames = [
     'Core',
     'Maths',
     'AppCore',
+    'RHI',
     'Launch',
 ]
 

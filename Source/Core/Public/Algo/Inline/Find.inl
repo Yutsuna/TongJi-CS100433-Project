@@ -67,7 +67,8 @@ Lumina::Algo::FindIfEqual ( TIterator InFirst, TIterator InLast, const TValue &I
  */
 
 template <class TIterator, class TPredicate>
-constexpr Lumina::TOptional<TIterator> Lumina::Algo::FindIfOrNone ( TIterator InFirst, TIterator InLast, TPredicate &&InPredicate )
+constexpr Lumina::TOptional<TIterator>
+Lumina::Algo::FindIfOrNone ( TIterator InFirst, TIterator InLast, TPredicate &&InPredicate )
 {
     TIterator Result = FindIf( InFirst, InLast, std::forward<TPredicate>( InPredicate ) );
     if ( Result != InLast )
@@ -113,7 +114,7 @@ Lumina::Algo::FindIfEqualOrNone ( TIterator InFirst, TIterator InLast, const TVa
 template <class TRangeType, class TPredicate>
     requires Lumina::Algo::Internal::CPointerReturnRange<TRangeType>
 constexpr Lumina::Algo::Internal::TRangeElementPtr<TRangeType> Lumina::Algo::FindIf ( TRangeType &&InRange,
-                                                                                    TPredicate &&InPredicate )
+                                                                                      TPredicate &&InPredicate )
 {
     return ForEachUntil( std::forward<TRangeType>( InRange ), std::forward<TPredicate>( InPredicate ) );
 }
@@ -144,7 +145,7 @@ constexpr Lumina::Algo::Internal::TRangeElementPtr<TRangeType> Lumina::Algo::Fin
 template <class TRangeType, class TPredicate>
     requires Lumina::Algo::Internal::CPointerReturnRange<TRangeType>
 constexpr Lumina::Algo::Internal::TRangeElementPtr<TRangeType> Lumina::Algo::FindIfNot ( TRangeType &&InRange,
-                                                                                       TPredicate &&InPredicate )
+                                                                                         TPredicate &&InPredicate )
 {
     auto &&Pred = std::forward<TPredicate>( InPredicate );
 

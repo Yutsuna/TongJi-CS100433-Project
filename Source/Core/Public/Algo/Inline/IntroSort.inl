@@ -47,9 +47,9 @@ void Lumina::Algo::IntroSort ( TRangeType &&InRange, TPredicate InPredicate ) no
 template <typename TIterator, typename TPredicate>
 /** NOLINTNEXTLINE(misc-no-recursion) */
 void Lumina::Algo::Internal::IntroSortLoop ( TIterator InFirst,
-                                            TIterator InLast,
-                                            Int32 InDepthLimit,
-                                            TPredicate &InPredicate ) noexcept
+                                             TIterator InLast,
+                                             Int32 InDepthLimit,
+                                             TPredicate &InPredicate ) noexcept
 {
     using FDifference               = std::iter_difference_t<TIterator>;
     constexpr FDifference Threshold = static_cast<FDifference>( InsertionSortThreshold );

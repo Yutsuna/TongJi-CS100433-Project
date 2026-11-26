@@ -18,7 +18,7 @@ namespace Internal
     template <typename Type>
     template <typename OtherType>
         requires Concepts::CConvertibleTo<OtherType *, Type *>
-    TDefaultDelete<Type>::TDefaultDelete( const TDefaultDelete<OtherType> LUMEN_UNUSED &InOther ) noexcept
+    TDefaultDelete<Type>::TDefaultDelete( const TDefaultDelete<OtherType> LUMINA_UNUSED &InOther ) noexcept
     {
         /** Empty */
     }
@@ -111,13 +111,13 @@ template <typename Type, typename Deleter> TUniquePtr<Type, Deleter> &TUniquePtr
 
 template <typename Type, typename Deleter> Type &TUniquePtr<Type, Deleter>::operator*() const noexcept
 {
-    LUMEN_ASSERT( IsValid() );
+    LUMINA_ASSERT( IsValid() );
     return *Object;
 }
 
 template <typename Type, typename Deleter> Type *TUniquePtr<Type, Deleter>::operator->() const noexcept
 {
-    LUMEN_ASSERT( IsValid() );
+    LUMINA_ASSERT( IsValid() );
     return Object;
 }
 
@@ -216,7 +216,7 @@ TUniquePtr<Type[], Deleter> &TUniquePtr<Type[], Deleter>::operator=( NullPtrType
 
 template <typename Type, typename Deleter> Type &TUniquePtr<Type[], Deleter>::operator[]( const USize Index ) const noexcept
 {
-    LUMEN_ASSERT( IsValid() );
+    LUMINA_ASSERT( IsValid() );
     return Object[Index];
 }
 

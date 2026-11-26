@@ -16,7 +16,7 @@ Lumina::FAtomicBitset::FAtomicBitset ( USize InNumBits )
 
 void Lumina::FAtomicBitset::Set ( USize InIndex ) noexcept
 {
-    LUMEN_ASSERT( InIndex < NumBits );
+    LUMINA_ASSERT( InIndex < NumBits );
 
     const USize BlockIndex = InIndex / BitsPerBlock;
     const USize BitOffset  = InIndex % BitsPerBlock;
@@ -29,7 +29,7 @@ void Lumina::FAtomicBitset::Set ( USize InIndex ) noexcept
 
 void Lumina::FAtomicBitset::Clear ( USize InIndex ) noexcept
 {
-    LUMEN_ASSERT( InIndex < NumBits );
+    LUMINA_ASSERT( InIndex < NumBits );
 
     const USize BlockIndex = InIndex / BitsPerBlock;
     const USize BitOffset  = InIndex % BitsPerBlock;
@@ -40,7 +40,7 @@ void Lumina::FAtomicBitset::Clear ( USize InIndex ) noexcept
 
 Lumina::Bool Lumina::FAtomicBitset::Test ( USize InIndex ) const noexcept
 {
-    LUMEN_ASSERT( InIndex < NumBits );
+    LUMINA_ASSERT( InIndex < NumBits );
 
     const USize BlockIndex = InIndex / BitsPerBlock;
     const USize BitOffset  = InIndex % BitsPerBlock;
@@ -77,7 +77,7 @@ void Lumina::FAtomicBitset::ClearAll () noexcept
     }
 }
 
-LUMEN_FORCE_INLINE Lumina::USize Lumina::FAtomicBitset::GetNumBits () const noexcept
+LUMINA_FORCE_INLINE Lumina::USize Lumina::FAtomicBitset::GetNumBits () const noexcept
 {
     return NumBits;
 }

@@ -36,13 +36,13 @@ constexpr Lumina::Bool Lumina::Thread::Internal::FBufferFlag::IsDirty ( FBufferF
 }
 
 constexpr Lumina::Thread::Internal::FBufferFlag::Type Lumina::Thread::Internal::FBufferFlag::Make ( FBufferFlag::Type ReaderIndex,
-                                                                                                  FBufferFlag::Type WriterIndex,
-                                                                                                  FBufferFlag::Type TempIndex,
-                                                                                                  Bool bIsDirty ) noexcept
+                                                                                                    FBufferFlag::Type WriterIndex,
+                                                                                                    FBufferFlag::Type TempIndex,
+                                                                                                    Bool bIsDirty ) noexcept
 {
-    LUMEN_ASSERT( ReaderIndex < 3 );
-    LUMEN_ASSERT( WriterIndex < 3 );
-    LUMEN_ASSERT( TempIndex < 3 );
+    LUMINA_ASSERT( ReaderIndex < 3 );
+    LUMINA_ASSERT( WriterIndex < 3 );
+    LUMINA_ASSERT( TempIndex < 3 );
 
     const FBufferFlag::Type ReaderBit = ReaderIndex << ReaderShift;
     const FBufferFlag::Type WriterBit = WriterIndex << WriterShift;

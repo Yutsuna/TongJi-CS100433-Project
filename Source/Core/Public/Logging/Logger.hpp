@@ -86,33 +86,33 @@ private:
 
 #include "Inline/Logger.inl"
 
-#define LUMEN_LOG( Category, Verbosity, Format, ... )                                                                            \
+#define LUMINA_LOG( Category, Verbosity, Format, ... )                                                                           \
     Lumina::FLogger::GetInstance().TLog( Category, Verbosity, Format __VA_OPT__(, ) __VA_ARGS__ )
 
 /**
  * @note The name is converted to FStringView explicitly: FLogCategory has both an FStringView and an FString
  *       constructor, so passing a string literal directly is ambiguous.
  */
-#define LUMEN_LOG_DEFINE_CATEGORY( CategoryVar, CategoryName )                                                                   \
+#define LUMINA_LOG_DEFINE_CATEGORY( CategoryVar, CategoryName )                                                                  \
     static const ::Lumina::FLogCategory CategoryVar( static_cast<::Lumina::FStringView>( CategoryName ) );
 
-#define LUMEN_LOG_FATAL( Category, Format, ... )                                                                                 \
-    LUMEN_LOG( Category, Lumina::ELogVerbosity::Fatal, Format __VA_OPT__(, ) __VA_ARGS__ )
-#define LUMEN_LOG_ERROR( Category, Format, ... )                                                                                 \
-    LUMEN_LOG( Category, Lumina::ELogVerbosity::Error, Format __VA_OPT__(, ) __VA_ARGS__ )
-#define LUMEN_LOG_WARNING( Category, Format, ... )                                                                               \
-    LUMEN_LOG( Category, Lumina::ELogVerbosity::Warning, Format __VA_OPT__(, ) __VA_ARGS__ )
-#define LUMEN_LOG_DISPLAY( Category, Format, ... )                                                                               \
-    LUMEN_LOG( Category, Lumina::ELogVerbosity::Display, Format __VA_OPT__(, ) __VA_ARGS__ )
-#define LUMEN_LOG_INFO( Category, Format, ... )                                                                                  \
-    LUMEN_LOG( Category, Lumina::ELogVerbosity::Info, Format __VA_OPT__(, ) __VA_ARGS__ )
-#define LUMEN_LOG_VERBOSE( Category, Format, ... )                                                                               \
-    LUMEN_LOG( Category, Lumina::ELogVerbosity::Verbose, Format __VA_OPT__(, ) __VA_ARGS__ )
-#define LUMEN_LOG_VERY_VERBOSE( Category, Format, ... )                                                                          \
-    LUMEN_LOG( Category, Lumina::ELogVerbosity::VeryVerbose, Format __VA_OPT__(, ) __VA_ARGS__ )
+#define LUMINA_LOG_FATAL( Category, Format, ... )                                                                                \
+    LUMINA_LOG( Category, Lumina::ELogVerbosity::Fatal, Format __VA_OPT__(, ) __VA_ARGS__ )
+#define LUMINA_LOG_ERROR( Category, Format, ... )                                                                                \
+    LUMINA_LOG( Category, Lumina::ELogVerbosity::Error, Format __VA_OPT__(, ) __VA_ARGS__ )
+#define LUMINA_LOG_WARNING( Category, Format, ... )                                                                              \
+    LUMINA_LOG( Category, Lumina::ELogVerbosity::Warning, Format __VA_OPT__(, ) __VA_ARGS__ )
+#define LUMINA_LOG_DISPLAY( Category, Format, ... )                                                                              \
+    LUMINA_LOG( Category, Lumina::ELogVerbosity::Display, Format __VA_OPT__(, ) __VA_ARGS__ )
+#define LUMINA_LOG_INFO( Category, Format, ... )                                                                                 \
+    LUMINA_LOG( Category, Lumina::ELogVerbosity::Info, Format __VA_OPT__(, ) __VA_ARGS__ )
+#define LUMINA_LOG_VERBOSE( Category, Format, ... )                                                                              \
+    LUMINA_LOG( Category, Lumina::ELogVerbosity::Verbose, Format __VA_OPT__(, ) __VA_ARGS__ )
+#define LUMINA_LOG_VERY_VERBOSE( Category, Format, ... )                                                                         \
+    LUMINA_LOG( Category, Lumina::ELogVerbosity::VeryVerbose, Format __VA_OPT__(, ) __VA_ARGS__ )
 
-#ifdef LUMEN_SHOW_LOG_SHADER_TRACE
-    #define LUMEN_LOG_SHADER_TRACE( Category, Format, ... ) LUMEN_LOG_VERBOSE( Category, Format __VA_OPT__(, ) __VA_ARGS__ )
+#ifdef LUMINA_SHOW_LOG_SHADER_TRACE
+    #define LUMINA_LOG_SHADER_TRACE( Category, Format, ... ) LUMINA_LOG_VERBOSE( Category, Format __VA_OPT__(, ) __VA_ARGS__ )
 #else
-    #define LUMEN_LOG_SHADER_TRACE( Category, Format, ... ) ( ( void )0 )
+    #define LUMINA_LOG_SHADER_TRACE( Category, Format, ... ) ( ( void )0 )
 #endif

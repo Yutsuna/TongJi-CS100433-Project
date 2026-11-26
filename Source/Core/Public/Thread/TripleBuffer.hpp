@@ -68,7 +68,7 @@ namespace Thread
             static constexpr Type Make ( Type ReaderIndex, Type WriterIndex, Type TempIndex, Bool bIsDirty ) noexcept;
         };
 
-        LUMEN_ENUM_FLAGS( FBufferFlag::Type );
+        LUMINA_ENUM_FLAGS( FBufferFlag::Type );
 
     } // namespace Internal
 

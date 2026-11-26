@@ -35,10 +35,10 @@ public:
 public:
 
     /** @brief Wakes up at least one waiting thread. */
-    LUMEN_FORCE_INLINE void NotifyOne () noexcept;
+    LUMINA_FORCE_INLINE void NotifyOne () noexcept;
 
     /** @brief Wakes up every waiting thread */
-    LUMEN_FORCE_INLINE void NotifyAll () noexcept;
+    LUMINA_FORCE_INLINE void NotifyAll () noexcept;
 
 public:
 

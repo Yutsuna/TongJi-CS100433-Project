@@ -7,8 +7,8 @@
 
 #include <Core/CoreDefinitions.hpp>
 
-#if not defined( LUMEN_PLATFORM_UNIX )
-    #if not defined( LUMEN_CLANG_TIDY )
+#if not defined( LUMINA_PLATFORM_UNIX )
+    #if not defined( LUMINA_CLANG_TIDY )
         #error "UnixTime.hpp is only supported on Unix-like platforms"
     #endif
 #else
@@ -37,13 +37,13 @@ namespace HAL
          * @returns A raw monotonic tick count in nanoseconds. The origin is arbitrary,
          *          only differences between two values are meaningful.
          */
-        static LUMEN_FORCE_INLINE UInt64 Ticks () noexcept;
+        static LUMINA_FORCE_INLINE UInt64 Ticks () noexcept;
 
         /** @returns The duration of @p DeltaTicks (a difference of two Ticks() values) in seconds. */
         static constexpr Float64 TicksToSeconds ( const UInt64 DeltaTicks ) noexcept;
 
         /** @returns The current wall-clock time in nanoseconds since Unix epoch. */
-        static LUMEN_FORCE_INLINE UInt64 NowNanoseconds () noexcept;
+        static LUMINA_FORCE_INLINE UInt64 NowNanoseconds () noexcept;
 
         /**
          * @brief Blocks the current thread for at least the specified number of seconds.

@@ -23,7 +23,7 @@ namespace Algo
      */
     template <typename TRangeType>
         requires Concepts::CSortableRange<TRangeType, std::less<>>
-    LUMEN_FORCE_INLINE void Sort ( TRangeType &&InRange ) noexcept;
+    LUMINA_FORCE_INLINE void Sort ( TRangeType &&InRange ) noexcept;
 
     /**
      * @brief Sorts the range using introsort and the given predicate.
@@ -34,7 +34,7 @@ namespace Algo
      */
     template <typename TRangeType, typename TPredicate>
         requires Concepts::CSortableRange<TRangeType, TPredicate>
-    LUMEN_FORCE_INLINE void Sort ( TRangeType &&InRange, TPredicate InPredicate ) noexcept;
+    LUMINA_FORCE_INLINE void Sort ( TRangeType &&InRange, TPredicate InPredicate ) noexcept;
 
     /**
      * @brief Sorts the range in ascending order (`operator<`) using a stable merge sort.
@@ -47,7 +47,7 @@ namespace Algo
      */
     template <typename TRangeType>
         requires Concepts::CSortableRange<TRangeType, std::less<>>
-    LUMEN_FORCE_INLINE void StableSort ( TRangeType &&InRange ) noexcept;
+    LUMINA_FORCE_INLINE void StableSort ( TRangeType &&InRange ) noexcept;
 
     /**
      * @brief Sorts the range using a stable merge sort and the given predicate.
@@ -61,7 +61,7 @@ namespace Algo
      */
     template <typename TRangeType, typename TPredicate>
         requires Concepts::CSortableRange<TRangeType, TPredicate>
-    LUMEN_FORCE_INLINE void StableSort ( TRangeType &&InRange, TPredicate InPredicate ) noexcept;
+    LUMINA_FORCE_INLINE void StableSort ( TRangeType &&InRange, TPredicate InPredicate ) noexcept;
 
 } // namespace Algo
 

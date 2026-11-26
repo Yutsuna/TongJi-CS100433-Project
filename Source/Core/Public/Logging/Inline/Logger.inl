@@ -14,9 +14,9 @@
 
 template <typename... Args>
 void Lumina::FLogger::TLog ( const FLogCategory &Category,
-                            const ELogVerbosity::Type Verbosity,
-                            const FStringView Format,
-                            Args &&...InArgs ) noexcept
+                             const ELogVerbosity::Type Verbosity,
+                             const FStringView Format,
+                             Args &&...InArgs ) noexcept
 {
     try
     {

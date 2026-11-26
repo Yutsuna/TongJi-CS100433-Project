@@ -7,7 +7,7 @@
 
 extern "C"
 {
-#if defined( LUMEN_PLATFORM_WINDOWS )
+#if defined( LUMINA_PLATFORM_WINDOWS )
     #ifndef WIN32_LEAN_AND_MEAN
         #define WIN32_LEAN_AND_MEAN
     #endif
@@ -16,7 +16,7 @@ extern "C"
     #endif
     #include <io.h>
     #include <windows.h>
-#elif defined( LUMEN_PLATFORM_UNIX ) || defined( LUMEN_PLATFORM_MACOS )
+#elif defined( LUMINA_PLATFORM_UNIX ) || defined( LUMINA_PLATFORM_MACOS )
     #include <unistd.h>
 #endif
 }
@@ -43,7 +43,7 @@ namespace
      */
     Bool WriteStdout ( const AnsiChar *Data, USize Size ) noexcept
     {
-#if defined( LUMEN_PLATFORM_WINDOWS )
+#if defined( LUMINA_PLATFORM_WINDOWS )
         while ( Size > 0 )
         {
             const UInt8 Chunk   = Size > 0x40000000u ? 0x40000000u : static_cast<UInt8>( Size );
@@ -57,7 +57,7 @@ namespace
             Size -= static_cast<USize>( Written );
         }
         return true;
-#elif defined( LUMEN_PLATFORM_UNIX ) || defined( LUMEN_PLATFORM_MACOS )
+#elif defined( LUMINA_PLATFORM_UNIX ) || defined( LUMINA_PLATFORM_MACOS )
         while ( Size > 0 )
         {
             const ISize Written = ::write( STDOUT_FILENO, Data, Size );
@@ -90,7 +90,7 @@ namespace
      */
     Bool EnableAnsiEscapeCodes () noexcept
     {
-#if defined( LUMEN_PLATFORM_WINDOWS )
+#if defined( LUMINA_PLATFORM_WINDOWS )
     #ifndef ENABLE_VIRTUAL_TERMINAL_PROCESSING
         #define ENABLE_VIRTUAL_TERMINAL_PROCESSING 0x0004
     #endif
@@ -260,7 +260,7 @@ void FLogger::CoutMessage ( const FLogMessage &LogMessage ) const noexcept
     {
         Flush( "Log message output failed: " );
         Flush( Exception.what() );
-        Flush( LUMEN_NEWLINE );
+        Flush( LUMINA_NEWLINE );
     }
     if ( LogMessage.Verbosity == ELogVerbosity::Fatal )
     {

@@ -8,8 +8,8 @@
 #include <Core/CoreTypes.hpp>
 #include <CoreExport.hpp>
 
-#if not defined( LUMEN_PLATFORM_LINUX )
-    #if not defined( LUMEN_CLANG_TIDY )
+#if not defined( LUMINA_PLATFORM_LINUX )
+    #if not defined( LUMINA_CLANG_TIDY )
         #error "LinuxFutex.hpp is only available on Linux."
     #endif
 #else

@@ -51,7 +51,7 @@ public:
     }
 
     /** @brief Constructs TExpected with an Error */
-    constexpr explicit TExpected ( FUnexpect LUMEN_UNUSED InPolicy,
+    constexpr explicit TExpected ( FUnexpect LUMINA_UNUSED InPolicy,
                                    const ErrorType &InError ) noexcept( std::is_nothrow_copy_constructible_v<ErrorType> )
         : Err( InError ), bHasValue( false )
     {
@@ -59,7 +59,7 @@ public:
     }
 
     /** @brief Constructs TExpected with an Error passed by rvalue reference */
-    constexpr explicit TExpected ( FUnexpect LUMEN_UNUSED InPolicy,
+    constexpr explicit TExpected ( FUnexpect LUMINA_UNUSED InPolicy,
                                    ErrorType &&InError ) noexcept( std::is_nothrow_move_constructible_v<ErrorType> )
         : Err( std::move( InError ) ), bHasValue( false )
     {
@@ -88,7 +88,7 @@ public:
 
     /** @brief Constructs the callback result directly in value storage. */
     template <class Function, class Arguments>
-    constexpr TExpected( FEmplaceTag LUMEN_UNUSED InTag, Function &&Func, Arguments &&Args ) noexcept(
+    constexpr TExpected( FEmplaceTag LUMINA_UNUSED InTag, Function &&Func, Arguments &&Args ) noexcept(
         std::is_nothrow_invocable_v<Function, Arguments> &&
         std::is_nothrow_constructible_v<ValueType, std::invoke_result_t<Function, Arguments>> )
         : Val( Invoke( std::forward<Function>( Func ), std::forward<Arguments>( Args ) ) ), bHasValue( true )
@@ -262,21 +262,21 @@ public:
     /** @brief Dereference operator. Undefined behavior if the expected holds an error. */
     constexpr decltype( auto ) operator*( this auto &&Self ) noexcept
     {
-        LUMEN_ASSERT( Self.bHasValue );
+        LUMINA_ASSERT( Self.bHasValue );
         return ( std::forward<decltype( Self )>( Self ).Val );
     }
 
     /** @brief Arrow operator. Undefined behavior if the expected holds an error. */
     constexpr auto *operator->( this auto &&Self ) noexcept
     {
-        LUMEN_ASSERT( Self.bHasValue );
+        LUMINA_ASSERT( Self.bHasValue );
         return std::addressof( Self.Val );
     }
 
     /** @brief Error accessor. Undefined behavior if the expected holds a value. */
     constexpr decltype( auto ) Error ( this auto &&Self ) noexcept
     {
-        LUMEN_ASSERT( Self.bHasValue == false );
+        LUMINA_ASSERT( Self.bHasValue == false );
         return ( std::forward<decltype( Self )>( Self ).Err );
     }
 
@@ -340,14 +340,14 @@ public:
         /** Empty */
     }
 
-    constexpr explicit TExpected ( FUnexpect LUMEN_UNUSED InPolicy,
+    constexpr explicit TExpected ( FUnexpect LUMINA_UNUSED InPolicy,
                                    const ErrorType &InError ) noexcept( std::is_nothrow_copy_constructible_v<ErrorType> )
         : Err( InError ), bHasValue( false )
     {
         /** Empty */
     }
 
-    constexpr explicit TExpected ( FUnexpect LUMEN_UNUSED InPolicy,
+    constexpr explicit TExpected ( FUnexpect LUMINA_UNUSED InPolicy,
                                    ErrorType &&InError ) noexcept( std::is_nothrow_move_constructible_v<ErrorType> )
         : Err( std::move( InError ) ), bHasValue( false )
     {
@@ -487,13 +487,13 @@ public:
 
     constexpr void operator*() const noexcept
     {
-        LUMEN_ASSERT( bHasValue );
+        LUMINA_ASSERT( bHasValue );
     }
 
     /** @brief Error accessor. Undefined behavior if the expected holds success. */
     constexpr decltype( auto ) Error ( this auto &&Self ) noexcept
     {
-        LUMEN_ASSERT( Self.bHasValue == false );
+        LUMINA_ASSERT( Self.bHasValue == false );
         return ( std::forward<decltype( Self )>( Self ).Err );
     }
 
@@ -536,23 +536,23 @@ namespace Internal
 
 } // namespace Internal
 
-#define LUMEN_EXPECT( Var, Expr )                                                                                                \
+#define LUMINA_EXPECT( Var, Expr )                                                                                               \
     auto &&Var##_lumenExpected_ = ( Expr );                                                                                      \
     if ( not Var##_lumenExpected_ ) [[unlikely]]                                                                                 \
     {                                                                                                                            \
-        return Lumina::MakeUnexpected( std::forward<decltype( Var##_lumenExpected_ )>( Var##_lumenExpected_ ).Error() );          \
+        return Lumina::MakeUnexpected( std::forward<decltype( Var##_lumenExpected_ )>( Var##_lumenExpected_ ).Error() );         \
     }                                                                                                                            \
     [[maybe_unused]] auto &&Var =                                                                                                \
         Lumina::Internal::UnpackExpected( std::forward<decltype( Var##_lumenExpected_ )>( Var##_lumenExpected_ ) )
 
-#define LUMEN_TRY_EXPECT_ERROR( Expr )                                                                                           \
+#define LUMINA_TRY_EXPECT_ERROR( Expr )                                                                                          \
                                                                                                                                  \
     do                                                                                                                           \
     {                                                                                                                            \
         auto &&_lumenExpected_ = ( Expr );                                                                                       \
         if ( not _lumenExpected_ ) [[unlikely]]                                                                                  \
         {                                                                                                                        \
-            return Lumina::MakeUnexpected( std::forward<decltype( _lumenExpected_ )>( _lumenExpected_ ).Error() );                \
+            return Lumina::MakeUnexpected( std::forward<decltype( _lumenExpected_ )>( _lumenExpected_ ).Error() );               \
         }                                                                                                                        \
     } while ( false )
 

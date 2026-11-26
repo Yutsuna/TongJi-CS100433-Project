@@ -13,7 +13,7 @@
 #include <bit>
 #include <csignal>
 
-#if not defined( LUMEN_PLATFROM_WINDOWS )
+#if not defined( LUMINA_PLATFROM_WINDOWS )
     #include <signal.h> /** NOLINT(modernize-deprecated-headers, hicpp-deprecated-headers) */
 #endif
 
@@ -48,8 +48,10 @@ constexpr Lumina::Int32 PopLowestBit ( Lumina::UInt64 &InOutMask ) noexcept
 
 using FOSHandler = void ( * )( Lumina::Int32 );
 
-#if defined( LUMEN_PLATFORM_UNIX )
-void InstallSignalAction ( const Lumina::Int32 InOSCode, void ( *InHandler )( Lumina::Int32 ), const Lumina::Int32 InFlags ) noexcept
+#if defined( LUMINA_PLATFORM_UNIX )
+void InstallSignalAction ( const Lumina::Int32 InOSCode,
+                           void ( *InHandler )( Lumina::Int32 ),
+                           const Lumina::Int32 InFlags ) noexcept
 {
     struct sigaction Action = {};
     Action.sa_handler       = InHandler;
@@ -62,10 +64,10 @@ void InstallSignalAction ( const Lumina::Int32 InOSCode, void ( *InHandler )( Lu
 /** @brief Installs InHandler as the OS-level handler of InOSCode. */
 void InstallOSHandler ( const Lumina::Int32 InOSCode, const FOSHandler InHandler ) noexcept
 {
-#if defined( LUMEN_PLATFROM_WINDOWS )
+#if defined( LUMINA_PLATFROM_WINDOWS )
     static_cast<void>( std::signal( InOSCode, InHandler ) );
 
-#elif defined( LUMEN_PLATFORM_UNIX )
+#elif defined( LUMINA_PLATFORM_UNIX )
     InstallSignalAction( InOSCode, InHandler, SA_RESTART );
 #else
     #error "PlatformSignal.cpp: InstallOSHandler is only available on Windows or Unix platforms."
@@ -75,10 +77,10 @@ void InstallOSHandler ( const Lumina::Int32 InOSCode, const FOSHandler InHandler
 /** @brief Restores the default OS behaviour of InOSCode. */
 void RestoreDefaultOSHandler ( const Lumina::Int32 InOSCode ) noexcept
 {
-#if defined( LUMEN_PLATFROM_WINDOWS )
+#if defined( LUMINA_PLATFROM_WINDOWS )
     static_cast<void>( std::signal( InOSCode, SIG_DFL ) );
 
-#elif defined( LUMEN_PLATFORM_UNIX )
+#elif defined( LUMINA_PLATFORM_UNIX )
     InstallSignalAction( InOSCode, SIG_DFL, 0 );
 #else
     #error "PlatformSignal.cpp: RestoreDefaultOSHandler is only available on Windows or Unix platforms."
@@ -182,7 +184,7 @@ void Lumina::HAL::FPlatformSignal::Reset ()
 
 void Lumina::HAL::FPlatformSignal::HandleOSSignal ( const Int32 InSignal )
 {
-#if defined( LUMEN_PLATFROM_WINDOWS )
+#if defined( LUMINA_PLATFROM_WINDOWS )
     /**
      * INFO: The CRT may reset the handler to SIG_DFL before calling it: re-arm so the next occurrence is caught too.
      */
