@@ -1,13 +1,13 @@
-///
-/// @file EnumFlags.hpp
-/// @brief Defines macros for handling enum flags.
-///
+/**
+ * @file EnumFlags.hpp
+ * @brief Defines macros for handling enum flags.
+ */
 
 #pragma once
 
 #include "CoreTypes.hpp"
 
-#define Lumina_ENUM_FLAGS( EnumType )                                                                                             \
+#define LUMEN_ENUM_FLAGS( EnumType )                                                                                             \
     [[nodiscard]] constexpr inline EnumType operator|( EnumType Lhs, EnumType Rhs ) noexcept                                     \
     {                                                                                                                            \
         using UnderlyingType = std::underlying_type_t<EnumType>;                                                                 \

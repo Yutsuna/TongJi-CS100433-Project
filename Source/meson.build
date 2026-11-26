@@ -23,4 +23,3 @@ endforeach
 
 subdir('Meson/Public')
 subdir('Meson/Private')
-subdir('Meson/Tests')

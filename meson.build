@@ -13,10 +13,11 @@ project(
         'c_std=c23',
         'default_library=shared',
         'warning_level=0',
-        'cpp_ccache=enabled',
-        'c_ccache=enabled',
+        'b_ndebug=if-release',
     ],
     meson_version : '>=1.10',
 )
+
+add_project_arguments('-freflection', language : 'cpp')
 
 subdir('Source/')
