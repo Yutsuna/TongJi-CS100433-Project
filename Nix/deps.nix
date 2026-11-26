@@ -17,6 +17,7 @@
   buildInputs = with pkgs; [
     glm
     glfw
+    imgui
   ];
 
   devInputs = with pkgs; [

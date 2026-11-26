@@ -9,8 +9,8 @@ let
 in
 gccStdenv.mkDerivation {
   pname = "TongJi-CS100433-Project";
-  inherit version;
   src = pkgs.lib.cleanSource ../.;
+  inherit version;
 
   inherit (deps) nativeBuildInputs buildInputs;
 
