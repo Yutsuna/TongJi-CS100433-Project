@@ -37,13 +37,13 @@ namespace Maths
             }
         };
 
-#ifdef LUMEN_COMPILER_CLANG
+#ifdef LUMINA_COMPILER_CLANG
     #pragma clang diagnostic push
     #pragma clang diagnostic ignored "-Wc11-extensions"
     #pragma clang diagnostic ignored "-Wgnu-anonymous-struct"
     #pragma clang diagnostic ignored "-Wnested-anon-types"
 
-#elif defined( LUMEN_COMPILER_GCC )
+#elif defined( LUMINA_COMPILER_GCC )
     #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wpedantic"
 

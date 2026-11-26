@@ -14,7 +14,7 @@
 #include <Memory/UniquePtr.hpp>
 #include <Templates/Vector.hpp>
 
-#if not defined( LUMEN_PLATFORM_UNIX )
+#if not defined( LUMINA_PLATFORM_UNIX )
 #else
 
 extern "C"
@@ -26,7 +26,7 @@ extern "C"
     #include <sys/stat.h>
     #include <unistd.h>
 
-    #if defined( LUMEN_PLATFORM_MACOS )
+    #if defined( LUMINA_PLATFORM_MACOS )
         #include <copyfile.h>
         #include <sys/clonefile.h>
     #endif
@@ -397,7 +397,7 @@ namespace Filesystem
         TExpected<void, EFileError>
         CopyFile ( const FPath &InSource, const FPath &InDestination, const Bool bOverwrite ) noexcept override
         {
-    #if defined( LUMEN_PLATFORM_MACOS )
+    #if defined( LUMINA_PLATFORM_MACOS )
             /** macOS Fast path: clonefile APFS */
             if ( ::clonefile( InSource.ToCString(), InDestination.ToCString(), bOverwrite ? 0 : CLONE_NOFOLLOW ) == 0 )
             {
@@ -487,7 +487,7 @@ namespace Filesystem
             Stat.bIsDirectory = S_ISDIR( St.st_mode );
             Stat.bIsReadOnly  = ( St.st_mode & S_IWUSR ) == 0;
             Stat.FileSize     = static_cast<UInt64>( St.st_size );
-    #if defined( LUMEN_PLATFORM_MACOS )
+    #if defined( LUMINA_PLATFORM_MACOS )
             Stat.LastModifiedTime = static_cast<UInt64>( St.st_mtimespec.tv_sec ) * 1000ULL +
                                     static_cast<UInt64>( St.st_mtimespec.tv_nsec ) / 1000000ULL;
     #else

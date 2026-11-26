@@ -5,7 +5,7 @@
 
 #include <Core/CoreDefinitions.hpp>
 
-#if defined( LUMEN_PLATFORM_MACOS )
+#if defined( LUMINA_PLATFORM_MACOS )
 
     #include <HAL/MacOS/MacOSFutex.hpp>
 

@@ -5,7 +5,7 @@
 
 #include <Maths/SIMD/SIMD.hpp>
 
-#if defined( LUMEN_SIMD_SSE )
+#if defined( LUMINA_SIMD_SSE )
 
     #include <Maths/SIMD/Backend/SIMDSSE.hpp>
 

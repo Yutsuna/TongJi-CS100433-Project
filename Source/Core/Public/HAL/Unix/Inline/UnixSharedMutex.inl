@@ -5,8 +5,8 @@
 
 #pragma once
 
-#if not defined( LUMEN_PLATFORM_UNIX )
-    #if not defined( LUMEN_CLANG_TIDY )
+#if not defined( LUMINA_PLATFORM_UNIX )
+    #if not defined( LUMINA_CLANG_TIDY )
         #error "UnixSharedMutex.hpp is only available on Unix platforms."
     #endif
 #else

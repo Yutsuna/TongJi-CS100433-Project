@@ -32,7 +32,7 @@ namespace Internal
         /** @brief Converting constructor: Allows upcasting deleters from derived to base. */
         template <typename OtherType>
             requires Concepts::CConvertibleTo<OtherType *, Type *>
-        TDefaultDelete( const TDefaultDelete<OtherType> LUMEN_UNUSED &InOther ) noexcept;
+        TDefaultDelete( const TDefaultDelete<OtherType> LUMINA_UNUSED &InOther ) noexcept;
 
         /** @brief Deletes the provided pointer. */
         void operator()( const Type *Ptr ) const noexcept;

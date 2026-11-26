@@ -91,13 +91,13 @@ template <typename Type> TSharedPtr<Type> &TSharedPtr<Type>::operator=( const TS
 
 template <typename Type> Type &TSharedPtr<Type>::operator*() const noexcept
 {
-    LUMEN_ASSERT( IsValid() );
+    LUMINA_ASSERT( IsValid() );
     return *Object;
 }
 
 template <typename Type> Type *TSharedPtr<Type>::operator->() const noexcept
 {
-    LUMEN_ASSERT( IsValid() );
+    LUMINA_ASSERT( IsValid() );
     return Object;
 }
 

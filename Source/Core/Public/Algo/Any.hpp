@@ -27,7 +27,7 @@ namespace Algo
      */
     template <class TObject, typename TPredicate>
         requires( Concepts::CConvertibleTo<TInvokeResultT<TPredicate, Internal::TRangeReferenceT<TObject>>, Bool> )
-    LUMEN_FORCE_INLINE constexpr Bool AnyOf ( TObject &&Object, TPredicate &&Predicate );
+    LUMINA_FORCE_INLINE constexpr Bool AnyOf ( TObject &&Object, TPredicate &&Predicate );
 
 } // namespace Algo
 

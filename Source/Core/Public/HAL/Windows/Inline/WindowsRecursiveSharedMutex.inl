@@ -7,8 +7,8 @@
 
 #include <HAL/Windows/WindowsRecursiveSharedMutex.hpp>
 
-#if not defined( LUMEN_PLATFORM_WINDOWS )
-    #if not defined( LUMEN_CLANG_TIDY )
+#if not defined( LUMINA_PLATFORM_WINDOWS )
+    #if not defined( LUMINA_CLANG_TIDY )
         #error "WindowsRecursiveSharedMutex.inl is only supported on Windows"
     #endif
 #else

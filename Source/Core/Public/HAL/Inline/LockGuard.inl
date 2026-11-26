@@ -47,21 +47,21 @@ template <class TMutexType> Lumina::HAL::TUniqueLock<TMutexType>::TUniqueLock( T
 }
 
 template <class TMutexType>
-Lumina::HAL::TUniqueLock<TMutexType>::TUniqueLock( TMutexType &InMutex, FDeferLock LUMEN_UNUSED InTag ) noexcept
+Lumina::HAL::TUniqueLock<TMutexType>::TUniqueLock( TMutexType &InMutex, FDeferLock LUMINA_UNUSED InTag ) noexcept
     : Mutex( &InMutex )
 {
     /** Empty */
 }
 
 template <class TMutexType>
-Lumina::HAL::TUniqueLock<TMutexType>::TUniqueLock( TMutexType &InMutex, FTryToLock LUMEN_UNUSED InTag ) noexcept
+Lumina::HAL::TUniqueLock<TMutexType>::TUniqueLock( TMutexType &InMutex, FTryToLock LUMINA_UNUSED InTag ) noexcept
     : Mutex( &InMutex )
 {
     static_cast<void>( TryLock() );
 }
 
 template <class TMutexType>
-Lumina::HAL::TUniqueLock<TMutexType>::TUniqueLock( TMutexType &InMutex, FAdoptLock LUMEN_UNUSED InTag ) noexcept
+Lumina::HAL::TUniqueLock<TMutexType>::TUniqueLock( TMutexType &InMutex, FAdoptLock LUMINA_UNUSED InTag ) noexcept
     : Mutex( &InMutex ), bIsLocked( true )
 {
     /** Empty */

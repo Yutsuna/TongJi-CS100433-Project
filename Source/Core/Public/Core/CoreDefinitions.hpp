@@ -6,41 +6,41 @@
 #pragma once
 
 #if defined( __unix__ )
-    #define LUMEN_PLATFORM_UNIX
+    #define LUMINA_PLATFORM_UNIX
 #endif
 
 /* */
 
 #if defined( _WIN32 ) or defined( _WIN64 )
-    #define LUMEN_PLATFORM_WINDOWS
+    #define LUMINA_PLATFORM_WINDOWS
 #elif defined( __linux__ )
-    #define LUMEN_PLATFORM_LINUX
+    #define LUMINA_PLATFORM_LINUX
 #elif defined( __APPLE__ ) and defined( __MACH__ )
-    #define LUMEN_PLATFORM_MACOS
+    #define LUMINA_PLATFORM_MACOS
 #endif
 
 /* */
 
 #if defined( __x86_64__ ) or defined( _M_X64 )
-    #define LUMEN_ARCH_X64
+    #define LUMINA_ARCH_X64
 
 #elif defined( __arm64__ ) or defined( _M_ARM64 )
-    #define LUMEN_ARCH_ARM64
+    #define LUMINA_ARCH_ARM64
 
 #endif
 
 /* */
 
-#if defined( LUMEN_PLATFORM_WINDOWS )
-    #define LUMEN_PATH_SEPARATOR "\\"
-    #define LUMEN_NEWLINE "\r\n"
-    #define LUMEN_SHARED_LIB_EXTENSION ".dll"
+#if defined( LUMINA_PLATFORM_WINDOWS )
+    #define LUMINA_PATH_SEPARATOR "\\"
+    #define LUMINA_NEWLINE "\r\n"
+    #define LUMINA_SHARED_LIB_EXTENSION ".dll"
 
-#elif defined( LUMEN_PLATFORM_LINUX ) or defined( LUMEN_PLATFORM_MACOS )
-    #define LUMEN_PATH_SEPARATOR "/"
-    #define LUMEN_NEWLINE "\n"
-    #define LUMEN_SHARED_LIB_EXTENSION ".so"
-    #define LUMEN_UNUSED __attribute__( ( unused ) )
+#elif defined( LUMINA_PLATFORM_LINUX ) or defined( LUMINA_PLATFORM_MACOS )
+    #define LUMINA_PATH_SEPARATOR "/"
+    #define LUMINA_NEWLINE "\n"
+    #define LUMINA_SHARED_LIB_EXTENSION ".so"
+    #define LUMINA_UNUSED __attribute__( ( unused ) )
 
 #else
 
@@ -49,46 +49,46 @@
 /* */
 
 #if defined( __clang__ )
-    #define LUMEN_COMPILER_CLANG
+    #define LUMINA_COMPILER_CLANG
 
 #elif defined( __GNUC__ )
-    #define LUMEN_COMPILER_GCC
+    #define LUMINA_COMPILER_GCC
 
 #elif defined( _MSC_VER )
-    #define LUMEN_COMPILER_MSVC
+    #define LUMINA_COMPILER_MSVC
 
 #endif
 
 /* */
 
 #if defined( __clang__ ) or defined( __GNUC__ )
-    #define LUMEN_DISABLE_UBSAN __attribute__( ( no_sanitize( "undefined" ) ) )
+    #define LUMINA_DISABLE_UBSAN __attribute__( ( no_sanitize( "undefined" ) ) )
 #else
-    #define LUMEN_DISABLE_UBSAN
+    #define LUMINA_DISABLE_UBSAN
 #endif
 
 /* */
 
-#if defined( LUMEN_COMPILER_CLANG ) or defined( LUMEN_COMPILER_GCC )
-    #define LUMEN_FORCE_INLINE inline __attribute__( ( always_inline ) )
-    #define LUMEN_NO_INLINE __attribute__( ( noinline ) )
-#elif defined( LUMEN_COMPILER_MSVC )
-    #define LUMEN_FORCE_INLINE __forceinline
-    #define LUMEN_NO_INLINE __declspec( noinline )
+#if defined( LUMINA_COMPILER_CLANG ) or defined( LUMINA_COMPILER_GCC )
+    #define LUMINA_FORCE_INLINE inline __attribute__( ( always_inline ) )
+    #define LUMINA_NO_INLINE __attribute__( ( noinline ) )
+#elif defined( LUMINA_COMPILER_MSVC )
+    #define LUMINA_FORCE_INLINE __forceinline
+    #define LUMINA_NO_INLINE __declspec( noinline )
 #else
-    #define LUMEN_FORCE_INLINE inline
-    #define LUMEN_NO_INLINE
+    #define LUMINA_FORCE_INLINE inline
+    #define LUMINA_NO_INLINE
 #endif
 
 /* */
 
 #if defined( NDEBUG )
-    #define LUMEN_ASSERT( Condition )                                                                                            \
+    #define LUMINA_ASSERT( Condition )                                                                                            \
         do                                                                                                                       \
         {                                                                                                                        \
         } while ( false )
-#elif defined( LUMEN_COMPILER_CLANG ) or defined( LUMEN_COMPILER_GCC )
-    #define LUMEN_ASSERT( Condition )                                                                                            \
+#elif defined( LUMINA_COMPILER_CLANG ) or defined( LUMINA_COMPILER_GCC )
+    #define LUMINA_ASSERT( Condition )                                                                                            \
         do                                                                                                                       \
         {                                                                                                                        \
             if ( not( Condition ) ) [[unlikely]]                                                                                 \
@@ -96,8 +96,8 @@
                 __builtin_trap();                                                                                                \
             }                                                                                                                    \
         } while ( false )
-#elif defined( LUMEN_COMPILER_MSVC )
-    #define LUMEN_ASSERT( Condition )                                                                                            \
+#elif defined( LUMINA_COMPILER_MSVC )
+    #define LUMINA_ASSERT( Condition )                                                                                            \
         do                                                                                                                       \
         {                                                                                                                        \
             if ( not( Condition ) ) [[unlikely]]                                                                                 \
@@ -109,5 +109,5 @@
 
 /* */
 
-#define LUMEN_EXIT_SUCCESS 0
-#define LUMEN_EXIT_FAILURE 84
+#define LUMINA_EXIT_SUCCESS 0
+#define LUMINA_EXIT_FAILURE 84

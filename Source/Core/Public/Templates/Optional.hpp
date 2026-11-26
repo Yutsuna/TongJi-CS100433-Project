@@ -56,7 +56,7 @@ public:
 
     /** @brief Emplace construction from a function */
     template <class Function, class Arguments>
-    constexpr TOptional( FEmplaceTag LUMEN_UNUSED InTag, Function &&Func, Arguments &&Args ) noexcept(
+    constexpr TOptional( FEmplaceTag LUMINA_UNUSED InTag, Function &&Func, Arguments &&Args ) noexcept(
         std::is_nothrow_invocable_v<Function, Arguments> &&
         std::is_nothrow_constructible_v<ValueType, std::invoke_result_t<Function, Arguments>> )
         : Value( Invoke( std::forward<Function>( Func ), std::forward<Arguments>( Args ) ) ), bHasValue( true )
@@ -227,13 +227,13 @@ public:
     /** @return Reference to value */
     constexpr decltype( auto ) operator*( this auto &&Self ) noexcept
     {
-        LUMEN_ASSERT( Self.bHasValue );
+        LUMINA_ASSERT( Self.bHasValue );
         return ( std::forward<decltype( Self )>( Self ).Value );
     }
 
     constexpr auto *operator->( this auto &&Self ) noexcept
     {
-        LUMEN_ASSERT( Self.bHasValue );
+        LUMINA_ASSERT( Self.bHasValue );
         return std::addressof( Self.Value );
     }
 
@@ -265,7 +265,7 @@ private:
 template <typename Type> inline constexpr Bool IsOptionalV                  = false;
 template <typename Type> inline constexpr Bool IsOptionalV<TOptional<Type>> = true;
 
-#define LUMEN_OPTIONAL( Var, Expr )                                                                                              \
+#define LUMINA_OPTIONAL( Var, Expr )                                                                                              \
     auto &&Var##_lumenOptional_ = ( Expr );                                                                                      \
     if ( not Var##_lumenOptional_.HasValue() ) [[unlikely]]                                                                      \
     {                                                                                                                            \
@@ -273,7 +273,7 @@ template <typename Type> inline constexpr Bool IsOptionalV<TOptional<Type>> = tr
     }                                                                                                                            \
     [[maybe_unused]] auto &&Var = *std::forward<decltype( Var##_lumenOptional_ )>( Var##_lumenOptional_ )
 
-#define LUMEN_TRY_OPTIONAL_ERROR( Expr )                                                                                         \
+#define LUMINA_TRY_OPTIONAL_ERROR( Expr )                                                                                         \
     do                                                                                                                           \
     {                                                                                                                            \
         auto &&_lumenOptError_ = ( Expr );                                                                                       \

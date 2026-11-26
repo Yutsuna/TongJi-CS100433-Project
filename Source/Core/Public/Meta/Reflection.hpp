@@ -17,9 +17,9 @@
 
 #if __has_include( <meta> ) && defined( __cpp_expansion_statements )
     #include <meta>
-    #define LUMEN_HAS_REFLECTION 1
+    #define LUMINA_HAS_REFLECTION 1
 #else
-    #define LUMEN_HAS_REFLECTION 0
+    #define LUMINA_HAS_REFLECTION 0
 #endif
 
 namespace Lumina
@@ -41,7 +41,7 @@ namespace Meta
     /** @brief Invoke Callback( Name, FieldRef ) for each semantic field, in declaration order. */
     template <CReflected TObject, typename TFunc> constexpr void ForEachMember ( TObject &Object, TFunc &&Callback )
     {
-#if LUMEN_HAS_REFLECTION
+#if LUMINA_HAS_REFLECTION
         using Bare = std::remove_cvref_t<TObject>;
         static constexpr auto Members =
             std::define_static_array( std::meta::nonstatic_data_members_of( ^^Bare, std::meta::access_context::unchecked() ) );
@@ -62,7 +62,7 @@ namespace Meta
     /** @brief Number of semantic fields ForEachMember will visit. */
     template <CReflected TObject> [[nodiscard]] consteval USize MemberCount ()
     {
-#if LUMEN_HAS_REFLECTION
+#if LUMINA_HAS_REFLECTION
         USize Count = 0;
         for ( const auto Member :
               std::meta::nonstatic_data_members_of( ^^std::remove_cvref_t<TObject>, std::meta::access_context::unchecked() ) )
@@ -83,7 +83,7 @@ namespace Meta
         requires std::is_enum_v<TEnum>
     [[nodiscard]] constexpr FStringView EnumName ( TEnum Value ) noexcept
     {
-#if LUMEN_HAS_REFLECTION
+#if LUMINA_HAS_REFLECTION
         template for ( constexpr auto Enumerator : std::define_static_array( std::meta::enumerators_of( ^^TEnum ) ) )
         {
             if ( Value == [:Enumerator:] )
@@ -103,7 +103,7 @@ namespace Meta
         requires std::is_enum_v<TEnum>
     [[nodiscard]] constexpr FStringView EnumQualifiedName ( TEnum Value ) noexcept
     {
-#if LUMEN_HAS_REFLECTION
+#if LUMINA_HAS_REFLECTION
         template for ( constexpr auto Enumerator : std::define_static_array( std::meta::enumerators_of( ^^TEnum ) ) )
         {
             if ( Value == [:Enumerator:] )
@@ -122,7 +122,7 @@ namespace Meta
     /** @brief Unqualified type name of T ("FLaunchEngineConfig", "FString"), aliases resolved. */
     template <typename TType> [[nodiscard]] consteval FStringView TypeName ()
     {
-#if LUMEN_HAS_REFLECTION
+#if LUMINA_HAS_REFLECTION
         constexpr std::meta::info Type = std::meta::dealias( ^^std::remove_cvref_t<TType> );
         constexpr FStringView Name =
             std::meta::has_identifier( Type ) ? std::meta::identifier_of( Type ) : std::meta::display_string_of( Type );
@@ -135,7 +135,7 @@ namespace Meta
     /** @brief Type name of the active alternative of a variant (monostate → "None"). */
     template <typename... Alts> [[nodiscard]] constexpr FStringView ActiveName ( const std::variant<Alts...> &Node )
     {
-#if LUMEN_HAS_REFLECTION
+#if LUMINA_HAS_REFLECTION
         return std::visit( [] ( const auto &Alt ) -> FStringView
         {
             using TObject = std::remove_cvref_t<decltype( Alt )>;

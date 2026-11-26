@@ -234,7 +234,7 @@ namespace MonadicInternal
 
     template <class Self, class Func>
         requires( not Concepts::CHasError<Self> )
-    constexpr decltype( auto ) InvokeRecover ( Self LUMEN_UNUSED &&InContainer,
+    constexpr decltype( auto ) InvokeRecover ( Self LUMINA_UNUSED &&InContainer,
                                                Func &&InFunc ) noexcept( std::is_nothrow_invocable_v<Func> )
     {
         return Invoke( std::forward<Func>( InFunc ) );

@@ -21,7 +21,7 @@ namespace HAL
 
 } // namespace Lumina
 
-#if defined( LUMEN_PLATFORM_LINUX )
+#if defined( LUMINA_PLATFORM_LINUX )
     #include <HAL/Linux/LinuxFutex.hpp>
 
 namespace Lumina
@@ -34,7 +34,7 @@ namespace HAL
 
 } // namespace Lumina
 
-#elif defined( LUMEN_PLATFORM_MACOS )
+#elif defined( LUMINA_PLATFORM_MACOS )
     #include <HAL/MacOS/MacOSFutex.hpp>
 
 namespace Lumina
@@ -47,7 +47,7 @@ namespace HAL
 
 } // namespace Lumina
 
-#elif defined( LUMEN_PLATFORM_WINDOWS )
+#elif defined( LUMINA_PLATFORM_WINDOWS )
     #include <HAL/Windows/WindowsFutex.hpp>
 
 namespace Lumina

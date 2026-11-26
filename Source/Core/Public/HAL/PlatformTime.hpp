@@ -13,9 +13,9 @@
 
 #include <HAL/Generic/GenericTime.hpp>
 
-#if defined( LUMEN_PLATFORM_WINDOWS )
+#if defined( LUMINA_PLATFORM_WINDOWS )
     #include <HAL/Windows/WindowsTime.hpp>
-#elif defined( LUMEN_PLATFORM_UNIX )
+#elif defined( LUMINA_PLATFORM_UNIX )
     #include <HAL/Unix/UnixTime.hpp>
 #else
     #error "PlatformTime.hpp is unable to determine the platform."
@@ -27,7 +27,7 @@ namespace Lumina
 namespace HAL
 {
 
-#if defined( LUMEN_PLATFORM_WINDOWS )
+#if defined( LUMINA_PLATFORM_WINDOWS )
     using FPlatformTime = FWindowsTime;
 #else
     using FPlatformTime = FUnixTime;
@@ -35,15 +35,15 @@ namespace HAL
 
 } // namespace HAL
 
-#if defined( LUMEN_COMPILER_MSVC )
+#if defined( LUMINA_COMPILER_MSVC )
     #pragma warning( push )
     #pragma warning( disable : 4455 )
 
-#elif defined( LUMEN_COMPILER_CLANG )
+#elif defined( LUMINA_COMPILER_CLANG )
     #pragma clang diagnostic push
     #pragma clang diagnostic ignored "-Wuser-defined-literals"
 
-#elif defined( LUMEN_COMPILER_GCC )
+#elif defined( LUMINA_COMPILER_GCC )
     #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wliteral-suffix"
 
@@ -79,13 +79,13 @@ namespace HAL
     return HAL::FGenericPlatformTime::ToSeconds<3'600.0>( Value );
 }
 
-#if defined( LUMEN_COMPILER_MSVC )
+#if defined( LUMINA_COMPILER_MSVC )
     #pragma warning( pop )
 
-#elif defined( LUMEN_COMPILER_CLANG )
+#elif defined( LUMINA_COMPILER_CLANG )
     #pragma clang diagnostic pop
 
-#elif defined( LUMEN_COMPILER_GCC )
+#elif defined( LUMINA_COMPILER_GCC )
     #pragma GCC diagnostic pop
 
 #endif

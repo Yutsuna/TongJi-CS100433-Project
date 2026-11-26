@@ -19,7 +19,7 @@ namespace
  * @return Number of consecutive trailing one bits.
  * @note Returns a value in the range [0, 64].
  */
-LUMEN_FORCE_INLINE Lumina::UInt32 CountTrailingOnes ( Lumina::UInt64 InWord ) noexcept
+LUMINA_FORCE_INLINE Lumina::UInt32 CountTrailingOnes ( Lumina::UInt64 InWord ) noexcept
 {
     return static_cast<Lumina::UInt32>( std::countr_one( InWord ) );
 }
@@ -27,7 +27,7 @@ LUMEN_FORCE_INLINE Lumina::UInt32 CountTrailingOnes ( Lumina::UInt64 InWord ) no
 /**
  * @return A mask containing InCount consecutive one bits, starting at bit zero.
  */
-LUMEN_FORCE_INLINE Lumina::UInt64 NOnes ( Lumina::UInt32 InCount ) noexcept
+LUMINA_FORCE_INLINE Lumina::UInt64 NOnes ( Lumina::UInt32 InCount ) noexcept
 {
     if ( InCount >= Lumina::FIndiceHeapAllocator::BitsPerWord )
     {
@@ -400,7 +400,7 @@ void Lumina::FIndiceHeapAllocator::Free ( FIndiceAllocation InAllocation ) noexc
      * INFO: Free requires a valid, currently allocated range.
      *       This assertion catches incorrect allocation ownership in debug builds.
      */
-    LUMEN_ASSERT( Allocated >= InAllocation.Count );
+    LUMINA_ASSERT( Allocated >= InAllocation.Count );
 
     const UInt32 FreedWord = InAllocation.Start / BitsPerWord;
 
@@ -412,7 +412,7 @@ void Lumina::FIndiceHeapAllocator::Free ( FIndiceAllocation InAllocation ) noexc
         const UInt32 BitIndex = InAllocation.Start % BitsPerWord;
         const UInt64 Mask     = 1ULL << BitIndex;
 
-        LUMEN_ASSERT( ( Bitmap[FreedWord] & Mask ) != 0ULL );
+        LUMINA_ASSERT( ( Bitmap[FreedWord] & Mask ) != 0ULL );
 
         Bitmap[FreedWord] &= ~Mask;
 
@@ -438,7 +438,7 @@ void Lumina::FIndiceHeapAllocator::Free ( FIndiceAllocation InAllocation ) noexc
 
         const UInt64 Mask = NOnes( Take ) << BitIndex;
 
-        LUMEN_ASSERT( ( Bitmap[WordIndex] & Mask ) == Mask );
+        LUMINA_ASSERT( ( Bitmap[WordIndex] & Mask ) == Mask );
 
         Bitmap[WordIndex] &= ~Mask;
 

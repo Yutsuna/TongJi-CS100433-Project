@@ -7,8 +7,8 @@
 
 #include <Core/CoreDefinitions.hpp>
 
-#if not defined( LUMEN_PLATFORM_UNIX )
-    #if not defined( LUMEN_CLANG_TIDY )
+#if not defined( LUMINA_PLATFORM_UNIX )
+    #if not defined( LUMINA_CLANG_TIDY )
         #error "UnixRecursiveSharedMutex.hpp is only available on Unix platforms."
     #endif
 #else
@@ -32,8 +32,8 @@ namespace HAL
     {
     public:
 
-        LUMEN_FORCE_INLINE FUnixRecursiveSharedMutex () noexcept;
-        LUMEN_FORCE_INLINE ~FUnixRecursiveSharedMutex() noexcept;
+        LUMINA_FORCE_INLINE FUnixRecursiveSharedMutex () noexcept;
+        LUMINA_FORCE_INLINE ~FUnixRecursiveSharedMutex() noexcept;
 
     public:
 
@@ -41,17 +41,17 @@ namespace HAL
          * @brief Tries to acquire the mutex.
          * @return True if the mutex was acquired, false otherwise.
          */
-        LUMEN_FORCE_INLINE Bool TryLock () noexcept;
+        LUMINA_FORCE_INLINE Bool TryLock () noexcept;
 
         /**
          * @brief Acquires the mutex.
          */
-        LUMEN_FORCE_INLINE void Lock () noexcept;
+        LUMINA_FORCE_INLINE void Lock () noexcept;
 
         /**
          * @brief Releases the mutex.
          */
-        LUMEN_FORCE_INLINE void Unlock () noexcept;
+        LUMINA_FORCE_INLINE void Unlock () noexcept;
 
     private:
 

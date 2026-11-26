@@ -51,7 +51,7 @@ namespace Filesystem
             USize TotalRead = 0;
             while ( TotalRead < Buffer.size() )
             {
-                LUMEN_EXPECT( BytesRead, Handle->Read( TSpan<Byte>( Buffer.data() + TotalRead, Buffer.size() - TotalRead ) ) );
+                LUMINA_EXPECT( BytesRead, Handle->Read( TSpan<Byte>( Buffer.data() + TotalRead, Buffer.size() - TotalRead ) ) );
                 if ( BytesRead == 0 )
                 {
                     break;
@@ -83,7 +83,7 @@ namespace Filesystem
 
             while ( TotalWritten < InData.size() )
             {
-                LUMEN_EXPECT( Written, Handle->Write( InData.subspan( TotalWritten ) ) );
+                LUMINA_EXPECT( Written, Handle->Write( InData.subspan( TotalWritten ) ) );
                 if ( Written == 0 ) [[unlikely]]
                 {
                     return MakeUnexpected( EFileError::DiskFull );

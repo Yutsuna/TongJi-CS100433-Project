@@ -8,8 +8,8 @@
 #include <HAL/PlatformAtomic.hpp>
 #include <HAL/Windows/WindowsSpinLockMutex.hpp>
 
-#if not defined( LUMEN_PLATFORM_WINDOWS )
-    #if not defined( LUMEN_CLANG_TIDY )
+#if not defined( LUMINA_PLATFORM_WINDOWS )
+    #if not defined( LUMINA_CLANG_TIDY )
         #error "WindowsSpinLockMutex.inl is only supported on Windows"
     #endif
 #else

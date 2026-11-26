@@ -5,7 +5,7 @@
 
 #include <Core/CoreDefinitions.hpp>
 
-#if defined( LUMEN_PLATFORM_LINUX )
+#if defined( LUMINA_PLATFORM_LINUX )
 
     #include <HAL/Linux/LinuxFutex.hpp>
 

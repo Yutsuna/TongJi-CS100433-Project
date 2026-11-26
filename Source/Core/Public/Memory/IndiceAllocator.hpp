@@ -24,7 +24,7 @@ namespace Lumina
  */
 struct FIndiceAllocatorRange
 {
-    LUMEN_FORCE_INLINE FIndiceAllocatorRange ( UInt32 InFirst, UInt32 InLast ) noexcept;
+    LUMINA_FORCE_INLINE FIndiceAllocatorRange ( UInt32 InFirst, UInt32 InLast ) noexcept;
 
     UInt32 First;
     UInt32 Last;
@@ -36,7 +36,7 @@ struct FIndiceAllocatorRange
  */
 struct FIndiceAllocation
 {
-    LUMEN_FORCE_INLINE FIndiceAllocation ( UInt32 InStart, UInt32 InCount ) noexcept;
+    LUMINA_FORCE_INLINE FIndiceAllocation ( UInt32 InStart, UInt32 InCount ) noexcept;
 
     UInt32 Start;
     UInt32 Count;
@@ -62,7 +62,7 @@ public:
      * @brief Constructs an FIndiceAllocator with the specified number of descriptors.
      * @param InNumDescriptors The total capacity of the allocator.
      */
-    LUMEN_FORCE_INLINE explicit FIndiceAllocator( UInt32 InNumDescriptors ) noexcept;
+    LUMINA_FORCE_INLINE explicit FIndiceAllocator( UInt32 InNumDescriptors ) noexcept;
 
 public:
 
@@ -89,7 +89,7 @@ public:
      * @return The total capacity of the allocator.
      * @note Capacity is immutable and this operation does not require locking.
      */
-    [[nodiscard]] LUMEN_FORCE_INLINE UInt32 GetCapacity () const noexcept;
+    [[nodiscard]] LUMINA_FORCE_INLINE UInt32 GetCapacity () const noexcept;
 
 private:
 
@@ -120,7 +120,7 @@ public:
      * @brief Constructs an FIndiceHeapAllocator with the specified capacity.
      * @param InCapacity The number of indices in the heap.
      */
-    LUMEN_FORCE_INLINE explicit FIndiceHeapAllocator( UInt32 InCapacity ) noexcept;
+    LUMINA_FORCE_INLINE explicit FIndiceHeapAllocator( UInt32 InCapacity ) noexcept;
 
 public:
 
@@ -141,7 +141,7 @@ public:
      * @return The total capacity of the heap.
      * @note Capacity is immutable and this operation does not require locking.
      */
-    [[nodiscard]] LUMEN_FORCE_INLINE UInt32 GetCapacity () const noexcept;
+    [[nodiscard]] LUMINA_FORCE_INLINE UInt32 GetCapacity () const noexcept;
 
     /**
      * @return The number of currently allocated indices.

@@ -52,8 +52,8 @@ namespace HAL
     {
     public:
 
-        LUMEN_FORCE_INLINE explicit TLockGuard( TMutexType &InMutex ) noexcept;
-        LUMEN_FORCE_INLINE ~TLockGuard() noexcept;
+        LUMINA_FORCE_INLINE explicit TLockGuard( TMutexType &InMutex ) noexcept;
+        LUMINA_FORCE_INLINE ~TLockGuard() noexcept;
 
     private:
 
@@ -69,8 +69,8 @@ namespace HAL
     {
     public:
 
-        LUMEN_FORCE_INLINE explicit TSharedLock( TMutexType &InMutex ) noexcept;
-        LUMEN_FORCE_INLINE ~TSharedLock() noexcept;
+        LUMINA_FORCE_INLINE explicit TSharedLock( TMutexType &InMutex ) noexcept;
+        LUMINA_FORCE_INLINE ~TSharedLock() noexcept;
 
     private:
 
@@ -90,9 +90,9 @@ namespace HAL
 
         explicit TUniqueLock ( TMutexType &InMutex ) noexcept;
 
-        TUniqueLock ( TMutexType &InMutex, FDeferLock LUMEN_UNUSED InTag ) noexcept;
-        TUniqueLock ( TMutexType &InMutex, FTryToLock LUMEN_UNUSED InTag ) noexcept;
-        TUniqueLock ( TMutexType &InMutex, FAdoptLock LUMEN_UNUSED InTag ) noexcept;
+        TUniqueLock ( TMutexType &InMutex, FDeferLock LUMINA_UNUSED InTag ) noexcept;
+        TUniqueLock ( TMutexType &InMutex, FTryToLock LUMINA_UNUSED InTag ) noexcept;
+        TUniqueLock ( TMutexType &InMutex, FAdoptLock LUMINA_UNUSED InTag ) noexcept;
 
         ~TUniqueLock () noexcept;
 

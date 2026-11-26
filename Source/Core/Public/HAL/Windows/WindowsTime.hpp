@@ -7,8 +7,8 @@
 
 #include <Core/CoreDefinitions.hpp>
 
-#if not defined( LUMEN_PLATFORM_WINDOWS )
-    #if not defined( LUMEN_CLANG_TIDY )
+#if not defined( LUMINA_PLATFORM_WINDOWS )
+    #if not defined( LUMINA_CLANG_TIDY )
         #error "WindowsTime.hpp is only supported on Windows"
     #endif
 #else
@@ -47,15 +47,15 @@ namespace HAL
         {
             HANDLE Handle;
 
-            LUMEN_FORCE_INLINE FWindowsSleepTimer () noexcept;
-            LUMEN_FORCE_INLINE ~FWindowsSleepTimer() noexcept;
+            LUMINA_FORCE_INLINE FWindowsSleepTimer () noexcept;
+            LUMINA_FORCE_INLINE ~FWindowsSleepTimer() noexcept;
 
             FWindowsSleepTimer ( const FWindowsSleepTimer & )           = delete;
             FWindowsSleepTimer &operator=( const FWindowsSleepTimer & ) = delete;
         };
 
         /** @returns 1 / QueryPerformanceFrequency. The frequency is fixed at boot, so it is queried once. */
-        LUMEN_FORCE_INLINE Float64 QuerySecondsPerTick () noexcept;
+        LUMINA_FORCE_INLINE Float64 QuerySecondsPerTick () noexcept;
 
     } // namespace Internal
 
@@ -72,13 +72,13 @@ namespace HAL
          * @returns A raw monotonic QueryPerformanceCounter value. The origin is arbitrary,
          *          only differences between two values are meaningful.
          */
-        static LUMEN_FORCE_INLINE UInt64 Ticks () noexcept;
+        static LUMINA_FORCE_INLINE UInt64 Ticks () noexcept;
 
         /** @returns The duration of @p DeltaTicks (a difference of two Ticks() values) in seconds. */
-        static LUMEN_FORCE_INLINE Float64 TicksToSeconds ( const UInt64 DeltaTicks ) noexcept;
+        static LUMINA_FORCE_INLINE Float64 TicksToSeconds ( const UInt64 DeltaTicks ) noexcept;
 
         /** @returns The current wall-clock time in nanoseconds since Unix epoch. */
-        static LUMEN_FORCE_INLINE UInt64 NowNanoseconds () noexcept;
+        static LUMINA_FORCE_INLINE UInt64 NowNanoseconds () noexcept;
 
         /**
          * @brief Blocks the current thread for at least the specified number of seconds.

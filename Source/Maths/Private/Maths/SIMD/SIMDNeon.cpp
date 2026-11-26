@@ -5,7 +5,7 @@
 
 #include <Maths/SIMD/SIMD.hpp>
 
-#if defined( LUMEN_SIMD_NEON )
+#if defined( LUMINA_SIMD_NEON )
 
     #include <Maths/SIMD/Backend/SIMDNeon.hpp>
 

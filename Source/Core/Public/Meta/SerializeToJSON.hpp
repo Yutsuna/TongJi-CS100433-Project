@@ -62,7 +62,7 @@ namespace Meta
     template <CReflected TObject>
     [[nodiscard]] FString SerializeToJSON ( const TObject &Object, const FJSONOptions &Options = {} )
     {
-#if LUMEN_HAS_REFLECTION
+#if LUMINA_HAS_REFLECTION
         FString Out;
         Detail::WriteJSONValue( Out, Object, Options, 0 );
         return Out;

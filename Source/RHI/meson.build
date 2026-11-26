@@ -5,7 +5,7 @@
 
 ModuleDefinition = {
     'Name' : 'RHI',
-    'Type' : 'Executable',
+    'Type' : 'SharedLibrary',
     'OutputName' : 'Lumina',
     'SourceDir' : meson.current_source_dir(),
     'Private' : 'Private',

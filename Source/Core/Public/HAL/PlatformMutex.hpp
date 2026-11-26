@@ -7,7 +7,7 @@
 
 #include <Core/CoreDefinitions.hpp>
 
-#if defined( LUMEN_PLATFORM_WINDOWS )
+#if defined( LUMINA_PLATFORM_WINDOWS )
     #include <HAL/Windows/WindowsMutex.hpp>
     #include <HAL/Windows/WindowsRecursiveMutex.hpp>
     #include <HAL/Windows/WindowsSharedMutex.hpp>
@@ -28,7 +28,7 @@ namespace HAL
 
 } // namespace Lumina
 
-#elif defined( LUMEN_PLATFORM_UNIX )
+#elif defined( LUMINA_PLATFORM_UNIX )
     #include <HAL/Unix/UnixMutex.hpp>
     #include <HAL/Unix/UnixRecursiveSharedMutex.hpp>
     #include <HAL/Unix/UnixSharedMutex.hpp>
