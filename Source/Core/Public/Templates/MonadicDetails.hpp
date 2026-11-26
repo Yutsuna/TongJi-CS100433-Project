@@ -1,0 +1,245 @@
+/**
+ * @file MonadicDetails.hpp
+ * @brief Monadic details implementation
+ */
+
+#pragma once
+
+#include <Core/CoreDefinitions.hpp>
+#include <Core/CoreTypes.hpp>
+
+#include <Concepts/ConvertibleTo.hpp>
+#include <Concepts/IsVoid.hpp>
+#include <Concepts/SameAs.hpp>
+
+#include <Templates/Invoke.hpp>
+
+namespace Lumina
+{
+
+/** @struct FEmplaceTag
+ * @brief Selects direct construction from a monadic callback result.
+ */
+struct FEmplaceTag
+{
+};
+
+namespace Concepts
+{
+    template <class MonadicType>
+    concept CHasValueMember = requires( const MonadicType &Container )
+    /**
+     *
+     */
+    {
+        { Container.HasValue() } -> CConvertibleTo<Bool>;
+    };
+
+    template <class MonadicType>
+    concept CBoolTestable = requires( const MonadicType &Container )
+    /**
+     *
+     */
+    { static_cast<Bool>( Container ); };
+
+    template <class Self>
+    concept CHasError = requires( Self &&Container )
+    /**
+     *
+     */
+    { std::forward<Self>( Container ).Error(); };
+
+    template <class Out, class Source>
+    concept CHasFailHook = requires
+    /**
+     *
+     */
+    {
+        { Out::MonadicFail( std::declval<Source>() ) } -> CSameAs<Out>;
+    };
+
+    template <class Out, class Func, class Array>
+    concept CHasEmplaceHook = requires
+    /**
+     *
+     */
+    {
+        { Out::MonadicEmplace( std::declval<Func>(), std::declval<Array>() ) } -> CSameAs<Out>;
+    };
+
+    template <class Self>
+    concept CHasConsumeHook = requires( Self &&Container ) { std::forward<Self>( Container ).MonadicConsume(); };
+
+} // namespace Concepts
+
+namespace MonadicInternal
+{
+
+    template <class Self> using TSelfType        = std::remove_cvref_t<Self>;
+    template <class Self> using TValueRef        = decltype( *std::declval<Self>() );
+    template <class Self> using TConstElementRef = const std::remove_reference_t<TValueRef<Self>> &;
+
+    /** @brief True if `*Self` has type `void` (i.e. `TExpected<void, E>`). */
+    template <class Self> inline constexpr Bool CIsVoidValue = Concepts::CIsVoid<std::remove_cvref_t<TValueRef<Self>>>;
+
+    namespace Internal
+    {
+        template <class Self, Bool = CIsVoidValue<Self>> struct TInspectRefImpl
+        {
+            using Type = TConstElementRef<Self>;
+        };
+        template <class Self> struct TInspectRefImpl<Self, true>
+        {
+            using Type = std::nullptr_t;
+        };
+    } // namespace Internal
+
+    /** @brief Reference passed to Inspect callbacks; degrades to nullptr_t for void value types so constraints stay well-formed.
+     */
+    template <class Self> using TInspectRef = typename Internal::TInspectRefImpl<Self>::Type;
+
+    template <class MonadicType>
+    inline constexpr Bool bNothrowHas = []
+    {
+        if constexpr ( Concepts::CHasValueMember<MonadicType> )
+        {
+            return noexcept( std::declval<const MonadicType &>().HasValue() );
+        }
+        else
+        {
+            return noexcept( static_cast<Bool>( std::declval<const MonadicType &>() ) );
+        }
+    }();
+
+    template <class MonadicType>
+    [[nodiscard]] constexpr Bool Has ( const MonadicType &Container ) noexcept( bNothrowHas<MonadicType> )
+    {
+        if constexpr ( Concepts::CHasValueMember<MonadicType> )
+        {
+            return static_cast<Bool>( Container.HasValue() );
+        }
+        else
+        {
+            return static_cast<Bool>( Container );
+        }
+    }
+
+    template <class Out, class Source>
+    inline constexpr Bool bNothrowMakeFailure = []
+    {
+        if constexpr ( Concepts::CHasFailHook<Out, Source> )
+        {
+            return noexcept( Out::MonadicFail( std::declval<Source>() ) );
+        }
+        else
+        {
+            return std::is_nothrow_default_constructible_v<Out>;
+        }
+    }();
+
+    template <class Out, class Source>
+    [[nodiscard]] constexpr Out MakeFailure ( Source &&Failed ) noexcept( bNothrowMakeFailure<Out, Source> )
+    {
+        if constexpr ( Concepts::CHasFailHook<Out, Source> )
+        {
+            return Out::MonadicFail( std::forward<Source>( Failed ) );
+        }
+        else
+        {
+            static_assert( not Concepts::CHasError<Source>,
+                           "This container holds an error : define `static Out MonadicFail( Source && )` to propagate it." );
+            return Out();
+        }
+    }
+
+    template <class Self>
+    inline constexpr Bool bNothrowConsume = []
+    {
+        if constexpr ( Concepts::CHasConsumeHook<Self> )
+        {
+            return noexcept( std::declval<Self>().MonadicConsume() );
+        }
+        return true;
+    }();
+
+    template <class Self> constexpr void Consume ( Self &&Container ) noexcept( bNothrowConsume<Self> )
+    {
+        if constexpr ( Concepts::CHasConsumeHook<Self> )
+        {
+            std::forward<Self>( Container ).MonadicConsume();
+        }
+    }
+
+    template <class Out, class Func, class Array>
+    inline constexpr Bool bNothrowMakeValue = []
+    {
+        if constexpr ( Concepts::CHasEmplaceHook<Out, Func, Array> )
+        {
+            return noexcept( Out::MonadicEmplace( std::declval<Func>(), std::declval<Array>() ) );
+        }
+        else
+        {
+            return std::is_nothrow_invocable_v<Func, Array> &&
+                   std::is_nothrow_constructible_v<Out, std::invoke_result_t<Func, Array>>;
+        }
+    }();
+
+    template <class Out, class Func, class Array>
+    [[nodiscard]] constexpr Out MakeValue ( Func &&InFunc, Array &&Arg ) noexcept( bNothrowMakeValue<Out, Func, Array> )
+    {
+        if constexpr ( Concepts::CHasEmplaceHook<Out, Func, Array> )
+        {
+            return Out::MonadicEmplace( std::forward<Func>( InFunc ), std::forward<Array>( Arg ) );
+        }
+        else
+        {
+            return Out( Invoke( std::forward<Func>( InFunc ), std::forward<Array>( Arg ) ) );
+        }
+    }
+
+    /**
+     * @brief Transform a value into another value.
+     * @details References are decayed: a callable returning U& yields TContainer<U>, never a
+     *          container of references (which would be ill-formed and could dangle).
+     */
+    template <class Self, class Func> using TTransformResult = std::remove_cvref_t<std::invoke_result_t<Func, TValueRef<Self>>>;
+    template <class Self, class Func> using TTransformOut    = TSelfType<Self>::template Rebind<TTransformResult<Self, Func>>;
+
+    /** @brief AndThen : Bind a value into another value if it is valid. */
+    namespace Internal
+    {
+        template <class Self, class Func, Bool = CIsVoidValue<Self>> struct TBindOutImpl;
+
+        template <class Self, class Func> struct TBindOutImpl<Self, Func, true>
+        {
+            using Type = std::remove_cvref_t<std::invoke_result_t<Func>>;
+        };
+
+        template <class Self, class Func> struct TBindOutImpl<Self, Func, false>
+        {
+            using Type = std::remove_cvref_t<std::invoke_result_t<Func, TValueRef<Self>>>;
+        };
+    } // namespace Internal
+
+    template <class Self, class Func> using TBindOut = typename Internal::TBindOutImpl<Self, Func>::Type;
+
+    /** @brief OrElse : f() or f(Error()) if the host has an error. */
+    template <class Self, class Func>
+        requires Concepts::CHasError<Self>
+    constexpr decltype( auto ) InvokeRecover ( Self &&Container, Func &&InFunc ) noexcept(
+        std::is_nothrow_invocable_v<Func, decltype( std::forward<Self>( Container ).Error() )> )
+    {
+        return Invoke( std::forward<Func>( InFunc ), std::forward<Self>( Container ).Error() );
+    }
+
+    template <class Self, class Func>
+        requires( not Concepts::CHasError<Self> )
+    constexpr decltype( auto ) InvokeRecover ( Self LUMEN_UNUSED &&InContainer,
+                                               Func &&InFunc ) noexcept( std::is_nothrow_invocable_v<Func> )
+    {
+        return Invoke( std::forward<Func>( InFunc ) );
+    }
+
+} // namespace MonadicInternal
+
+} // namespace Lumina

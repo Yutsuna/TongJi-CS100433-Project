@@ -1,0 +1,6 @@
+#{
+# meson.options
+# Meson build options.
+#}
+
+option( 'enable_lto', type : 'boolean', value : false, description : 'Link-time optimisation, release buildtype only' )

@@ -9,25 +9,10 @@ let
 in
 gccStdenv.mkDerivation {
   pname = "TongJi-CS100433-Project";
-  inherit version;
   src = pkgs.lib.cleanSource ../.;
+  inherit version;
 
-  nativeBuildInputs = deps.nativeBuildInputs;
-  buildInputs = deps.buildInputs ++ [ pkgs.gcc16.cc.lib ];
-
-  buildPhase = ''
-    runHook preBuild
-    make -j$NIX_BUILD_CORES
-    runHook postBuild
-  '';
-
-  installPhase = ''
-    runHook preInstall
-    mkdir -p $out/bin
-    mv Ex* $out/bin
-    cp -r Shaders $out/bin/
-    runHook postInstall
-  '';
+  inherit (deps) nativeBuildInputs buildInputs;
 
   meta = {
     description = "TongJi-CS100433-Project";
