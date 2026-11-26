@@ -3,8 +3,8 @@
  * @brief Implement the FRHIShader class
  */
 
-#include "RHIShader.hpp"
 #include "RHIGL.hpp"
+#include <RHI/RHIShader.hpp>
 
 /**
  * Public
