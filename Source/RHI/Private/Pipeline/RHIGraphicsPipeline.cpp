@@ -3,6 +3,7 @@
  * @brief Graphics pipeline implementation.
  */
 
+#include "RHIPrivate.hpp"
 #include <RHI/RHIPipeline.hpp>
 
 /**

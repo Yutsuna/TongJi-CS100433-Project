@@ -4,9 +4,9 @@
  */
 
 #include <RHI/RHIWindow.hpp>
+#include <RHIPrivate.hpp>
 
 #include <Maths/Vec.hpp>
-#include <RHIPrivate.hpp>
 #include <String/String.hpp>
 
 extern "C"
@@ -25,12 +25,14 @@ extern "C"
 namespace
 {
 
+namespace LRHI = Lumina::RHI;
+
 Lumina::UInt32 WindowCount     = 0U;
 Lumina::Bool bErrorCallbackSet = false;
 
 inline void OnGLFWError ( const Lumina::Int32 InCode, const Lumina::AnsiChar *InDescription ) noexcept
 {
-    LUMINA_LOG_ERROR( Internal::LogRHI, "GLFW error {}: {}", InCode, InDescription );
+    LUMINA_LOG_ERROR( LRHI::Internal::LogRHI, "GLFW error {}: {}", InCode, InDescription );
 }
 
 inline void EnsureErrorCallback () noexcept
@@ -47,38 +49,37 @@ inline void EnsureErrorCallback () noexcept
     return static_cast<GLFWwindow *>( InWindow );
 }
 
-[[nodiscard]] inline Lumina::TExpected<void, Lumina::RHI::FRHIError>
-ValidateDesc ( const Lumina::RHI::FRHIWindowDesc &InDesc ) noexcept
+[[nodiscard]] inline Lumina::TExpected<void, LRHI::FRHIError> ValidateDesc ( const LRHI::FRHIWindowDesc &InDesc ) noexcept
 {
     if ( InDesc.Size.X == 0U or InDesc.Size.Y == 0U ) [[unlikely]]
     {
         return Lumina::MakeUnexpected(
-            Internal::MakeError( Lumina::RHI::ERHIErrorCode::InvalidArgument, "Window dimensions must be non-zero" ) );
+            LRHI::Internal::MakeError( LRHI::ERHIErrorCode::InvalidArgument, "Window dimensions must be non-zero" ) );
     }
 
     constexpr Lumina::UInt32 MaxDimension = static_cast<Lumina::UInt32>( std::numeric_limits<Lumina::Int32>::max() );
     if ( InDesc.Size.X > MaxDimension or InDesc.Size.Y > MaxDimension ) [[unlikely]]
     {
         return Lumina::MakeUnexpected(
-            Internal::MakeError( Lumina::RHI::ERHIErrorCode::InvalidArgument, "Window dimensions exceed GLFW limits" ) );
+            LRHI::Internal::MakeError( LRHI::ERHIErrorCode::InvalidArgument, "Window dimensions exceed GLFW limits" ) );
     }
 
     return {};
 }
 
-[[nodiscard]] inline Lumina::TExpected<void, Lumina::RHI::FRHIError> EnsureGLFWInitialized () noexcept
+[[nodiscard]] inline Lumina::TExpected<void, LRHI::FRHIError> EnsureGLFWInitialized () noexcept
 {
     EnsureErrorCallback();
 
     if ( WindowCount == 0U and glfwInit() == GLFW_FALSE ) [[unlikely]]
     {
         return Lumina::MakeUnexpected(
-            Internal::MakeError( Lumina::RHI::ERHIErrorCode::InitializationFailed, "glfwInit failed" ) );
+            LRHI::Internal::MakeError( LRHI::ERHIErrorCode::InitializationFailed, "glfwInit failed" ) );
     }
     return {};
 }
 
-inline void SetGLFWWindowHints ( const Lumina::RHI::FRHIWindowDesc &InDesc ) noexcept
+inline void SetGLFWWindowHints ( const LRHI::FRHIWindowDesc &InDesc ) noexcept
 {
     glfwWindowHint( GLFW_CONTEXT_VERSION_MAJOR, 4 );
     glfwWindowHint( GLFW_CONTEXT_VERSION_MINOR, 6 );
@@ -88,7 +89,7 @@ inline void SetGLFWWindowHints ( const Lumina::RHI::FRHIWindowDesc &InDesc ) noe
     glfwWindowHint( GLFW_VISIBLE, InDesc.bVisible ? GLFW_TRUE : GLFW_FALSE );
 }
 
-[[nodiscard]] inline GLFWwindow *CreateGLFWWindow ( const Lumina::RHI::FRHIWindowDesc &InDesc ) noexcept
+[[nodiscard]] inline GLFWwindow *CreateGLFWWindow ( const LRHI::FRHIWindowDesc &InDesc ) noexcept
 {
     const Lumina::FString Title{ InDesc.Title };
     const Lumina::Maths::FVec2i Size = static_cast<Lumina::Maths::FVec2i>( InDesc.Size );
@@ -102,18 +103,17 @@ inline void SetGLFWWindowHints ( const Lumina::RHI::FRHIWindowDesc &InDesc ) noe
  * Public
  */
 
-Lumina::RHI::FRHIWindow::FRHIWindow ( void *InWindow ) noexcept : NativeWindow( InWindow )
+LRHI::FRHIWindow::FRHIWindow ( void *InWindow ) noexcept : NativeWindow( InWindow )
 {
     /* */
 }
 
-Lumina::RHI::FRHIWindow::FRHIWindow ( FRHIWindow &&InOther ) noexcept
-    : NativeWindow( std::exchange( InOther.NativeWindow, nullptr ) )
+LRHI::FRHIWindow::FRHIWindow ( FRHIWindow &&InOther ) noexcept : NativeWindow( std::exchange( InOther.NativeWindow, nullptr ) )
 {
     /* */
 }
 
-Lumina::RHI::FRHIWindow &Lumina::RHI::FRHIWindow::operator=( FRHIWindow &&InOther ) noexcept
+LRHI::FRHIWindow &LRHI::FRHIWindow::operator=( FRHIWindow &&InOther ) noexcept
 {
     if ( this != &InOther )
     {
@@ -123,13 +123,12 @@ Lumina::RHI::FRHIWindow &Lumina::RHI::FRHIWindow::operator=( FRHIWindow &&InOthe
     return *this;
 }
 
-Lumina::RHI::FRHIWindow::~FRHIWindow () noexcept
+LRHI::FRHIWindow::~FRHIWindow () noexcept
 {
     Reset();
 }
 
-Lumina::TExpected<Lumina::RHI::FRHIWindow, Lumina::RHI::FRHIError>
-Lumina::RHI::FRHIWindow::Create ( const FRHIWindowDesc &InDesc )
+Lumina::TExpected<LRHI::FRHIWindow, LRHI::FRHIError> LRHI::FRHIWindow::Create ( const FRHIWindowDesc &InDesc )
 {
     LUMINA_TRY_EXPECT_ERROR( ValidateDesc( InDesc ) );
     LUMINA_TRY_EXPECT_ERROR( EnsureGLFWInitialized() );
@@ -144,7 +143,7 @@ Lumina::RHI::FRHIWindow::Create ( const FRHIWindowDesc &InDesc )
             glfwTerminate();
         }
         return MakeUnexpected(
-            Internal::MakeError( ERHIErrorCode::InitializationFailed, "Failed to create an OpenGL 4.6 core context" ) );
+            LRHI::Internal::MakeError( ERHIErrorCode::InitializationFailed, "Failed to create an OpenGL 4.6 core context" ) );
     }
 
     ++WindowCount;
@@ -155,46 +154,46 @@ Lumina::RHI::FRHIWindow::Create ( const FRHIWindowDesc &InDesc )
     return Result;
 }
 
-void Lumina::RHI::FRHIWindow::PollEvents () const noexcept
+void LRHI::FRHIWindow::PollEvents () const noexcept
 {
     glfwPollEvents();
 }
 
-void Lumina::RHI::FRHIWindow::SwapBuffers () const noexcept
+void LRHI::FRHIWindow::SwapBuffers () const noexcept
 {
     LUMINA_ASSERT( IsValid() );
     glfwSwapBuffers( GetWindow( NativeWindow ) );
 }
 
-void Lumina::RHI::FRHIWindow::MakeContextCurrent () const noexcept
+void LRHI::FRHIWindow::MakeContextCurrent () const noexcept
 {
     LUMINA_ASSERT( IsValid() );
     glfwMakeContextCurrent( GetWindow( NativeWindow ) );
 }
 
-void Lumina::RHI::FRHIWindow::SetVSync ( const Bool bEnabled ) const noexcept
+void LRHI::FRHIWindow::SetVSync ( const Bool bEnabled ) const noexcept
 {
     LUMINA_ASSERT( IsValid() );
     glfwSwapInterval( bEnabled ? 1 : 0 );
 }
 
-void Lumina::RHI::FRHIWindow::RequestClose () const noexcept
+void LRHI::FRHIWindow::RequestClose () const noexcept
 {
     LUMINA_ASSERT( IsValid() );
     glfwSetWindowShouldClose( GetWindow( NativeWindow ), GLFW_TRUE );
 }
 
-Lumina::Bool Lumina::RHI::FRHIWindow::ShouldClose () const noexcept
+Lumina::Bool LRHI::FRHIWindow::ShouldClose () const noexcept
 {
     return IsValid() and glfwWindowShouldClose( GetWindow( NativeWindow ) ) == GLFW_TRUE;
 }
 
-Lumina::Bool Lumina::RHI::FRHIWindow::IsValid () const noexcept
+Lumina::Bool LRHI::FRHIWindow::IsValid () const noexcept
 {
     return NativeWindow != nullptr;
 }
 
-Lumina::Maths::FVec2u Lumina::RHI::FRHIWindow::GetFramebufferSize () const noexcept
+Lumina::Maths::FVec2u LRHI::FRHIWindow::GetFramebufferSize () const noexcept
 {
     if ( not IsValid() )
     {
@@ -208,7 +207,7 @@ Lumina::Maths::FVec2u Lumina::RHI::FRHIWindow::GetFramebufferSize () const noexc
     return { static_cast<UInt32>( Width ), static_cast<UInt32>( Height ) };
 }
 
-void Lumina::RHI::FRHIWindow::Reset () noexcept
+void LRHI::FRHIWindow::Reset () noexcept
 {
     if ( NativeWindow == nullptr )
     {
