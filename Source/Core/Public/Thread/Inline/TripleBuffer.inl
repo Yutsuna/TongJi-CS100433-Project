@@ -1,0 +1,235 @@
+/**
+ * @file TripleBuffer.inl
+ * @brief TripleBuffer implementation.
+ */
+
+#pragma once
+
+#include <HAL/LockGuard.hpp>
+#include <Thread/TripleBuffer.hpp>
+
+/**
+ * FBufferFlag
+ */
+
+constexpr Lumina::Thread::Internal::FBufferFlag::Type
+Lumina::Thread::Internal::FBufferFlag::GetReaderIndex ( FBufferFlag::Type Flags ) noexcept
+{
+    return ( Flags & ReaderMask ) >> ReaderShift;
+}
+
+constexpr Lumina::Thread::Internal::FBufferFlag::Type
+Lumina::Thread::Internal::FBufferFlag::GetWriterIndex ( FBufferFlag::Type Flags ) noexcept
+{
+    return ( Flags & WriterMask ) >> WriterShift;
+}
+
+constexpr Lumina::Thread::Internal::FBufferFlag::Type
+Lumina::Thread::Internal::FBufferFlag::GetTempIndex ( FBufferFlag::Type Flags ) noexcept
+{
+    return ( Flags & TempMask ) >> TempShift;
+}
+
+constexpr Lumina::Bool Lumina::Thread::Internal::FBufferFlag::IsDirty ( FBufferFlag::Type Flags ) noexcept
+{
+    return ( Flags & Dirty ) != 0;
+}
+
+constexpr Lumina::Thread::Internal::FBufferFlag::Type Lumina::Thread::Internal::FBufferFlag::Make ( FBufferFlag::Type ReaderIndex,
+                                                                                                  FBufferFlag::Type WriterIndex,
+                                                                                                  FBufferFlag::Type TempIndex,
+                                                                                                  Bool bIsDirty ) noexcept
+{
+    LUMEN_ASSERT( ReaderIndex < 3 );
+    LUMEN_ASSERT( WriterIndex < 3 );
+    LUMEN_ASSERT( TempIndex < 3 );
+
+    const FBufferFlag::Type ReaderBit = ReaderIndex << ReaderShift;
+    const FBufferFlag::Type WriterBit = WriterIndex << WriterShift;
+    const FBufferFlag::Type TempBit   = TempIndex << TempShift;
+    const FBufferFlag::Type DirtyBit  = bIsDirty ? Dirty : static_cast<FBufferFlag::Type>( 0U );
+
+    return ReaderBit | WriterBit | TempBit | DirtyBit;
+}
+
+/**
+ * TTripleBuffer
+ */
+
+template <typename BufferType>
+Lumina::Thread::TTripleBuffer<BufferType>::TTripleBuffer()
+    : OwnedBuffers( Lumina::MakeUnique<BufferType[]>( 3 ) ),
+      //.
+      Buffers( OwnedBuffers.Get() ),
+      //.
+      BufferFlags( Internal::FBufferFlag::Type::Initial )
+{
+    Buffers[0] = Buffers[1] = Buffers[2] = BufferType();
+}
+
+template <typename BufferType>
+Lumina::Thread::TTripleBuffer<BufferType>::TTripleBuffer( const BufferType &InData )
+    : OwnedBuffers( Lumina::MakeUnique<BufferType[]>( 3 ) ),
+      /**
+       *
+       */
+      Buffers( OwnedBuffers.Get() ),
+      /**
+       *
+       */
+      BufferFlags( Internal::FBufferFlag::Type::Initial )
+{
+    Buffers[0] = Buffers[1] = Buffers[2] = InData;
+}
+
+template <typename BufferType>
+Lumina::Thread::TTripleBuffer<BufferType>::TTripleBuffer( BufferType ( &InBuffers )[3] )
+    : Buffers( &InBuffers[0] ),
+      /**
+       *
+       */
+      BufferFlags( Internal::FBufferFlag::Type::InitialDirty )
+{
+    /** Empty */
+}
+
+template <typename BufferType> Lumina::Bool Lumina::Thread::TTripleBuffer<BufferType>::IsDirty () const noexcept
+{
+    const Internal::FBufferFlag::Type CurrentFlags = BufferFlags.load( std::memory_order_acquire );
+
+    return Internal::FBufferFlag::IsDirty( CurrentFlags );
+}
+
+template <typename BufferType> const BufferType &Lumina::Thread::TTripleBuffer<BufferType>::ReadBuffer () const noexcept
+{
+    const Internal::FBufferFlag::Type CurrentFlags = BufferFlags.load( std::memory_order_acquire );
+    const Internal::FBufferFlag::Type ReaderIndex  = Internal::FBufferFlag::GetReaderIndex( CurrentFlags );
+
+    return Buffers[ReaderIndex];
+}
+
+template <typename BufferType> void Lumina::Thread::TTripleBuffer<BufferType>::SwapReadBuffers () noexcept
+{
+    Internal::FBufferFlag::Type CurrentFlags = BufferFlags.load( std::memory_order_acquire );
+
+    if ( not Internal::FBufferFlag::IsDirty( CurrentFlags ) )
+    {
+        return;
+    }
+
+    /*
+     * INFO:
+     *   Acquire -> synchronizes with the writer's release CAS
+     *              Buffers[new ReaderIndex] is fully visible
+
+     *   Release -> publishes that this reader is done with its old slot
+
+     */
+    while ( not BufferFlags.compare_exchange_weak( CurrentFlags, SwapReadWithTempFlags( CurrentFlags ), std::memory_order_acq_rel,
+                                                   std::memory_order_relaxed ) )
+    {
+        if ( not Internal::FBufferFlag::IsDirty( CurrentFlags ) )
+        {
+            /** INFO: Writer changed flags concurrently, dirty bit was cleared. */
+            return;
+        }
+    }
+}
+
+template <typename BufferType> void Lumina::Thread::TTripleBuffer<BufferType>::WriteBuffer ( const BufferType &InData )
+{
+    const HAL::TLockGuard<HAL::FPlatformMutex> LockGuard{ WriteMutex };
+
+    const Internal::FBufferFlag::Type CurrentFlags = BufferFlags.load( std::memory_order_relaxed );
+    const Internal::FBufferFlag::Type WriterIndex  = Internal::FBufferFlag::GetWriterIndex( CurrentFlags );
+
+    Buffers[WriterIndex] = InData;
+
+    PublishWrite();
+}
+
+template <typename BufferType>
+void Lumina::Thread::TTripleBuffer<BufferType>::WriteBuffer ( BufferType &&InData ) noexcept(
+    std::is_nothrow_move_assignable_v<BufferType> )
+{
+    const HAL::TLockGuard<HAL::FPlatformMutex> LockGuard{ WriteMutex };
+
+    const Internal::FBufferFlag::Type CurrentFlags = BufferFlags.load( std::memory_order_relaxed );
+    const Internal::FBufferFlag::Type WriterIndex  = Internal::FBufferFlag::GetWriterIndex( CurrentFlags );
+
+    Buffers[WriterIndex] = std::move( InData );
+
+    PublishWrite();
+}
+
+template <typename BufferType>
+template <typename Callable>
+    requires Lumina::Concepts::CIsInvocable<Callable, BufferType &>
+void Lumina::Thread::TTripleBuffer<BufferType>::WriteBuffer ( Callable &&InEditor )
+{
+    const HAL::TLockGuard<HAL::FPlatformMutex> LockGuard{ WriteMutex };
+
+    const Internal::FBufferFlag::Type CurrentFlags = BufferFlags.load( std::memory_order_relaxed );
+    const Internal::FBufferFlag::Type WriterIndex  = Internal::FBufferFlag::GetWriterIndex( CurrentFlags );
+
+    /** INFO: Let the caller modify the underlying buffer in-place directly */
+    InEditor( Buffers[WriterIndex] );
+
+    PublishWrite();
+}
+
+template <typename BufferType> void Lumina::Thread::TTripleBuffer<BufferType>::SwapWriteBuffers () noexcept
+{
+    const HAL::TLockGuard<HAL::FPlatformMutex> LockGuard{ WriteMutex };
+    PublishWrite();
+}
+
+template <typename BufferType> const BufferType *Lumina::Thread::TTripleBuffer<BufferType>::GetBuffers () const noexcept
+{
+    return Buffers;
+}
+
+template <typename BufferType>
+Lumina::Thread::Internal::FBufferFlag::Type
+Lumina::Thread::TTripleBuffer<BufferType>::SwapReadWithTempFlags ( const Internal::FBufferFlag::Type Flags ) const noexcept
+{
+    /**
+     * INFO: Reader takes the Temp slot, Temp takes the old Reader slot.
+     * Dirty becomes false because the Reader has just consumed the new data.
+     */
+    return Internal::FBufferFlag::Make( Internal::FBufferFlag::GetTempIndex( Flags ),   ///<< ReaderIdx
+                                        Internal::FBufferFlag::GetWriterIndex( Flags ), ///<< WriterIdx
+                                        Internal::FBufferFlag::GetReaderIndex( Flags ), ///<< TempIdx
+                                        false );                                        ///<< bIsDirty
+}
+
+template <typename BufferType>
+Lumina::Thread::Internal::FBufferFlag::Type
+Lumina::Thread::TTripleBuffer<BufferType>::SwapWriteWithTempFlags ( const Internal::FBufferFlag::Type Flags ) const noexcept
+{
+    /**
+     * INFO: Writer takes the Temp slot, Temp takes the old Writer slot.
+     * Dirty becomes true to signal fresh data to the Reader.
+     */
+    return Internal::FBufferFlag::Make( Internal::FBufferFlag::GetReaderIndex( Flags ), ///<< ReaderIdx
+                                        Internal::FBufferFlag::GetTempIndex( Flags ),   ///<< WriterIdx
+                                        Internal::FBufferFlag::GetWriterIndex( Flags ), ///<< TempIdx
+                                        true );                                         ///<< bIsDirty
+}
+
+template <typename BufferType> void Lumina::Thread::TTripleBuffer<BufferType>::PublishWrite () noexcept
+{
+    Internal::FBufferFlag::Type CurrentFlags = BufferFlags.load( std::memory_order_relaxed );
+
+    /**
+     * INFO:
+     *  Acquire -> ensure this thread sees the reader's prior accesses when it swapped away from a slot
+     *             needed when the writer later reclaims that slot in the next WriteBuffer call
+     *  Release -> publish that new data is available in the writer slot
+     */
+    while ( not BufferFlags.compare_exchange_weak( CurrentFlags, SwapWriteWithTempFlags( CurrentFlags ),
+                                                   std::memory_order_acq_rel, std::memory_order_relaxed ) )
+    {
+        /* */
+    }
+}

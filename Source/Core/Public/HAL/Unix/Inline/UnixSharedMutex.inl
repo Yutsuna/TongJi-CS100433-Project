@@ -1,0 +1,72 @@
+/**
+ * @file UnixSharedMutex.inl
+ * @brief Inline implementation of UnixSharedMutex
+ */
+
+#pragma once
+
+#if not defined( LUMEN_PLATFORM_UNIX )
+    #if not defined( LUMEN_CLANG_TIDY )
+        #error "UnixSharedMutex.hpp is only available on Unix platforms."
+    #endif
+#else
+
+    #include <HAL/Unix/UnixSharedMutex.hpp>
+
+    #include <pthread.h>
+
+/**
+ * Public
+ */
+
+Lumina::HAL::FUnixSharedMutex::~FUnixSharedMutex () noexcept
+{
+    if ( pthread_rwlock_destroy( &RwLock ) == 0 )
+    {
+        return;
+    }
+}
+
+void Lumina::HAL::FUnixSharedMutex::Lock () noexcept
+{
+    if ( pthread_rwlock_wrlock( &RwLock ) != 0 )
+    {
+        return;
+    }
+}
+
+void Lumina::HAL::FUnixSharedMutex::Unlock () noexcept
+{
+    if ( pthread_rwlock_unlock( &RwLock ) != 0 )
+    {
+        return;
+    }
+}
+
+void Lumina::HAL::FUnixSharedMutex::LockShared () noexcept
+{
+    if ( pthread_rwlock_rdlock( &RwLock ) != 0 )
+    {
+        return;
+    }
+}
+
+void Lumina::HAL::FUnixSharedMutex::UnlockShared () noexcept
+{
+    if ( pthread_rwlock_unlock( &RwLock ) != 0 )
+    {
+        return;
+    }
+}
+
+Lumina::Bool Lumina::HAL::FUnixSharedMutex::TryLock () noexcept
+{
+    return pthread_rwlock_trywrlock( &RwLock ) == 0;
+}
+
+Lumina::Bool Lumina::HAL::FUnixSharedMutex::TryLockShared () noexcept
+{
+    return pthread_rwlock_tryrdlock( &RwLock ) == 0;
+}
+
+#endif

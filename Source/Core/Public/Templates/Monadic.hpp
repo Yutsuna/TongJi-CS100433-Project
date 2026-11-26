@@ -1,0 +1,219 @@
+/**
+ * @file Monadic.hpp
+ * @brief Auto Monadic Mixin operations
+ */
+
+#pragma once
+
+#include <CoreExport.hpp>
+
+#include <Concepts/ConvertibleTo.hpp>
+#include <Concepts/IsInvocable.hpp>
+#include <Concepts/IsVoid.hpp>
+
+#include <Templates/MonadicDetails.hpp>
+
+#include <utility>
+
+namespace Lumina
+{
+
+namespace Concepts
+{
+
+    /**
+     * @concept CMonadic
+     * @brief Test the 3 monadic state
+     */
+    template <class Container>
+    concept CMonadic = ( CHasValueMember<std::remove_cvref_t<Container>> or CBoolTestable<std::remove_cvref_t<Container>> ) and
+                       requires( Container &&InContainer ) { *std::forward<Container>( InContainer ); };
+
+    /**
+     * @concept CTransformable
+     * @brief Test the transformable state (T -> U).
+     */
+    template <class Self, class Func>
+    concept CTransformable = CMonadic<Self> and Concepts::CIsInvocable<Func, MonadicInternal::TValueRef<Self>> and
+                             ( not Concepts::CIsVoid<MonadicInternal::TTransformResult<Self, Func>> ) and
+                             requires { typename MonadicInternal::TTransformOut<Self, Func>; };
+
+    /**
+     * @concept CBindable
+     * @brief Test the bindable state
+     */
+    template <class Self, class Func>
+    concept CBindable =
+        CMonadic<Self> and
+        ( MonadicInternal::CIsVoidValue<Self> ? Concepts::CIsInvocable<Func>
+                                              : Concepts::CIsInvocable<Func, MonadicInternal::TValueRef<Self>> ) and
+        CMonadic<MonadicInternal::TBindOut<Self, Func>>;
+
+    /**
+     * @concept CRecoverable
+     * @brief Test the recoverable state
+     */
+    template <class Self, class Func>
+    concept CRecoverable = CMonadic<Self> and std::constructible_from<MonadicInternal::TSelfType<Self>, Self> and
+                           requires( Self &&Container, Func &&InFunc ) {
+                               {
+                                   MonadicInternal::InvokeRecover( std::forward<Self>( Container ), std::forward<Func>( InFunc ) )
+                               } -> CSameAs<MonadicInternal::TSelfType<Self>>;
+                           };
+} // namespace Concepts
+
+/**
+ * @struct FMonadic
+ * @brief Monadic mixin with 0 CRTP
+ */
+struct CORE_EXPORT FMonadic
+{
+public:
+
+    /** @brief T -> U TOptional<T>.Transform(T->U) = TOptional<U> */
+    template <class Self, class Func>
+        requires Concepts::CTransformable<Self, Func>
+    [[nodiscard]] constexpr auto Transform ( this Self &&InSelf, Func &&InFunc ) noexcept(
+        noexcept( MonadicInternal::Has( std::declval<const MonadicInternal::TSelfType<Self> &>() ) ) and
+        noexcept( *std::declval<Self>() ) and
+        noexcept( MonadicInternal::MakeValue<MonadicInternal::TTransformOut<Self, Func>>( std::declval<Func>(),
+                                                                                          *std::declval<Self>() ) ) and
+        noexcept( MonadicInternal::MakeFailure<MonadicInternal::TTransformOut<Self, Func>>( std::declval<Self>() ) ) and
+        noexcept( MonadicInternal::Consume( std::declval<Self>() ) ) ) -> MonadicInternal::TTransformOut<Self, Func>
+    {
+        using Out = MonadicInternal::TTransformOut<Self, Func>;
+
+        if ( MonadicInternal::Has( InSelf ) ) [[likely]]
+        {
+            if constexpr ( std::is_lvalue_reference_v<Self> )
+            {
+                return MonadicInternal::MakeValue<Out>( std::forward<Func>( InFunc ), *std::forward<Self>( InSelf ) );
+            }
+            else
+            {
+                Out Result = MonadicInternal::MakeValue<Out>( std::forward<Func>( InFunc ),
+                                                              static_cast<MonadicInternal::TValueRef<Self>>( *InSelf ) );
+                MonadicInternal::Consume( std::forward<Self>( InSelf ) );
+                return Result;
+            }
+        }
+        return MonadicInternal::MakeFailure<Out>( std::forward<Self>( InSelf ) );
+    }
+
+public:
+
+    /** @brief T -> TContainer<U> */
+    template <class Self, class Func>
+        requires Concepts::CBindable<Self, Func>
+    [[nodiscard]] constexpr auto AndThen ( this Self &&InSelf, Func &&InFunc ) noexcept(
+        noexcept( MonadicInternal::Has( std::declval<const MonadicInternal::TSelfType<Self> &>() ) ) and
+        noexcept( *std::declval<Self>() ) and
+        ( MonadicInternal::CIsVoidValue<Self> ? std::is_nothrow_invocable_v<Func>
+                                              : std::is_nothrow_invocable_v<Func, MonadicInternal::TValueRef<Self>> ) and
+        noexcept( MonadicInternal::MakeFailure<MonadicInternal::TBindOut<Self, Func>>( std::declval<Self>() ) ) )
+        -> MonadicInternal::TBindOut<Self, Func>
+    {
+        using Out = MonadicInternal::TBindOut<Self, Func>;
+
+        if ( MonadicInternal::Has( InSelf ) ) [[likely]]
+        {
+            if constexpr ( MonadicInternal::CIsVoidValue<Self> )
+            {
+                return Invoke( std::forward<Func>( InFunc ) );
+            }
+            else
+            {
+                return Invoke( std::forward<Func>( InFunc ), *std::forward<Self>( InSelf ) );
+            }
+        }
+        return MonadicInternal::MakeFailure<Out>( std::forward<Self>( InSelf ) );
+    }
+
+public:
+
+    /** @brief Func() -> TSelfType */
+    template <class Self, class Func>
+        requires Concepts::CRecoverable<Self, Func>
+    [[nodiscard]] constexpr auto OrElse ( this Self &&InSelf, Func &&InFunc ) noexcept(
+        noexcept( MonadicInternal::Has( std::declval<const MonadicInternal::TSelfType<Self> &>() ) ) and
+        std::is_nothrow_constructible_v<MonadicInternal::TSelfType<Self>, Self> and
+        noexcept( MonadicInternal::InvokeRecover( std::declval<Self>(), std::declval<Func>() ) ) )
+        -> MonadicInternal::TSelfType<Self>
+    {
+        if ( MonadicInternal::Has( InSelf ) ) [[likely]]
+        {
+            return std::forward<Self>( InSelf );
+        }
+        return MonadicInternal::InvokeRecover( std::forward<Self>( InSelf ), std::forward<Func>( InFunc ) );
+    }
+
+public:
+
+    /** @brief Inspect the container, calling the given function if the container is not empty. */
+    template <class Self, class Func>
+        requires Concepts::CMonadic<Self> and
+                 ( MonadicInternal::CIsVoidValue<Self> ? Concepts::CIsInvocable<Func>
+                                                       : Concepts::CIsInvocable<Func, MonadicInternal::TInspectRef<Self>> )
+    constexpr auto Inspect ( this Self &&InSelf, Func &&InFunc ) noexcept(
+        noexcept( MonadicInternal::Has( std::declval<const MonadicInternal::TSelfType<Self> &>() ) ) and
+        ( MonadicInternal::CIsVoidValue<Self> ? std::is_nothrow_invocable_v<Func>
+                                              : std::is_nothrow_invocable_v<Func, MonadicInternal::TInspectRef<Self>> ) and
+        ( std::is_lvalue_reference_v<Self> or std::is_nothrow_move_constructible_v<MonadicInternal::TSelfType<Self>> ) )
+        -> std::conditional_t<std::is_lvalue_reference_v<Self>, Self, MonadicInternal::TSelfType<Self>>
+    {
+        if ( MonadicInternal::Has( InSelf ) ) [[likely]]
+        {
+            if constexpr ( MonadicInternal::CIsVoidValue<Self> )
+            {
+                Invoke( std::forward<Func>( InFunc ) );
+            }
+            else
+            {
+                Invoke( std::forward<Func>( InFunc ), static_cast<MonadicInternal::TConstElementRef<Self>>( *InSelf ) );
+            }
+        }
+        return std::forward<Self>( InSelf );
+    }
+
+public:
+
+    /** @brief ValueOr. Not available for void value types (no value) - silently SFINAE'd out. */
+    template <class Self, class U>
+        requires Concepts::CMonadic<Self> and Concepts::CConvertibleTo<U, std::remove_cvref_t<MonadicInternal::TValueRef<Self>>>
+    [[nodiscard]] constexpr auto ValueOr ( this Self &&InSelf, U &&Fallback ) noexcept(
+        noexcept( MonadicInternal::Has( std::declval<const MonadicInternal::TSelfType<Self> &>() ) ) &&
+        std::is_nothrow_convertible_v<MonadicInternal::TValueRef<Self>, std::remove_cvref_t<MonadicInternal::TValueRef<Self>>> and
+        std::is_nothrow_convertible_v<U, std::remove_cvref_t<MonadicInternal::TValueRef<Self>>> )
+        -> std::remove_cvref_t<MonadicInternal::TValueRef<Self>>
+    {
+        using R = std::remove_cvref_t<MonadicInternal::TValueRef<Self>>;
+
+        if ( MonadicInternal::Has( InSelf ) ) [[likely]]
+        {
+            return static_cast<R>( *std::forward<Self>( InSelf ) );
+        }
+        return static_cast<R>( std::forward<U>( Fallback ) );
+    }
+
+    /** @brief Returns the contained value or invokes Func only when the container is empty. */
+    template <class Self, class Func>
+        requires Concepts::CMonadic<Self> and Concepts::CIsInvocable<Func> and
+                 Concepts::CConvertibleTo<TInvokeResultT<Func>, std::remove_cvref_t<MonadicInternal::TValueRef<Self>>>
+    [[nodiscard]] constexpr auto ValueOrElse ( this Self &&InSelf, Func &&InFunc ) noexcept(
+        noexcept( MonadicInternal::Has( std::declval<const MonadicInternal::TSelfType<Self> &>() ) ) and
+        std::is_nothrow_convertible_v<MonadicInternal::TValueRef<Self>, std::remove_cvref_t<MonadicInternal::TValueRef<Self>>> and
+        std::is_nothrow_invocable_v<Func> and
+        std::is_nothrow_convertible_v<TInvokeResultT<Func>, std::remove_cvref_t<MonadicInternal::TValueRef<Self>>> )
+        -> std::remove_cvref_t<MonadicInternal::TValueRef<Self>>
+    {
+        using R = std::remove_cvref_t<MonadicInternal::TValueRef<Self>>;
+
+        if ( MonadicInternal::Has( InSelf ) ) [[likely]]
+        {
+            return static_cast<R>( *std::forward<Self>( InSelf ) );
+        }
+        return static_cast<R>( Invoke( std::forward<Func>( InFunc ) ) );
+    }
+};
+
+} // namespace Lumina

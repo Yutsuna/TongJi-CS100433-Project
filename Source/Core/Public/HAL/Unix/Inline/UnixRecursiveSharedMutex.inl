@@ -1,0 +1,89 @@
+/**
+ * @file UnixRecursiveSharedMutex.inl
+ * @brief Inline implementation of FUnixRecursiveSharedMutex.
+ */
+
+#pragma once
+
+#if not defined( LUMEN_PLATFORM_UNIX )
+    #if not defined( LUMEN_CLANG_TIDY )
+        #error "UnixRecursiveSharedMutex.hpp is only available on Unix platforms."
+    #endif
+#else
+
+    #include <HAL/PlatformAtomic.hpp>
+    #include <HAL/Unix/UnixRecursiveSharedMutex.hpp>
+
+    #include <pthread.h>
+
+/**
+ * Public
+ */
+
+Lumina::HAL::FUnixRecursiveSharedMutex::FUnixRecursiveSharedMutex () noexcept : Mutex( PTHREAD_MUTEX_INITIALIZER )
+{
+    pthread_mutexattr_t Attributes;
+
+    if ( pthread_mutexattr_init( &Attributes ) != 0 ) [[unlikely]]
+    {
+        return;
+    }
+
+    if ( pthread_mutexattr_settype( &Attributes, PTHREAD_MUTEX_RECURSIVE ) != 0 ) [[unlikely]]
+    {
+        return;
+    }
+
+    if ( pthread_mutex_init( &Mutex, &Attributes ) != 0 ) [[unlikely]]
+    {
+        return;
+    }
+
+    pthread_mutexattr_destroy( &Attributes );
+}
+
+Lumina::HAL::FUnixRecursiveSharedMutex::~FUnixRecursiveSharedMutex () noexcept
+{
+    pthread_mutex_destroy( &Mutex );
+}
+
+void Lumina::HAL::FUnixRecursiveSharedMutex::Lock () noexcept
+{
+    if ( pthread_mutex_trylock( &Mutex ) == 0 )
+    {
+        return;
+    }
+
+    for ( UInt32 Round = 1U; Round <= GSpinRounds; ++Round )
+    {
+        for ( UInt32 Pause = 0U; Pause < ( 1U << Round ); ++Pause )
+        {
+            CpuRelax();
+        }
+
+        if ( pthread_mutex_trylock( &Mutex ) == 0 )
+        {
+            return;
+        }
+    }
+
+    if ( pthread_mutex_lock( &Mutex ) != 0 ) [[unlikely]]
+    {
+        return;
+    }
+}
+
+Lumina::Bool Lumina::HAL::FUnixRecursiveSharedMutex::TryLock () noexcept
+{
+    return pthread_mutex_trylock( &Mutex ) == 0;
+}
+
+void Lumina::HAL::FUnixRecursiveSharedMutex::Unlock () noexcept
+{
+    if ( pthread_mutex_unlock( &Mutex ) != 0 ) [[unlikely]]
+    {
+        return;
+    }
+}
+
+#endif
