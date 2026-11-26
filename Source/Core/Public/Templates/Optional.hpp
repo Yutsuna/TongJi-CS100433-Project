@@ -266,20 +266,20 @@ template <typename Type> inline constexpr Bool IsOptionalV                  = fa
 template <typename Type> inline constexpr Bool IsOptionalV<TOptional<Type>> = true;
 
 #define LUMINA_OPTIONAL( Var, Expr )                                                                                             \
-    auto &&Var##_lumenOptional_ = ( Expr );                                                                                      \
-    if ( not Var##_lumenOptional_.HasValue() ) [[unlikely]]                                                                      \
+    auto &&Var##_luminaOptional_ = ( Expr );                                                                                     \
+    if ( not Var##_luminaOptional_.HasValue() ) [[unlikely]]                                                                     \
     {                                                                                                                            \
         return {};                                                                                                               \
     }                                                                                                                            \
-    [[maybe_unused]] auto &&Var = *std::forward<decltype( Var##_lumenOptional_ )>( Var##_lumenOptional_ )
+    [[maybe_unused]] auto &&Var = *std::forward<decltype( Var##_luminaOptional_ )>( Var##_luminaOptional_ )
 
 #define LUMINA_TRY_OPTIONAL_ERROR( Expr )                                                                                        \
     do                                                                                                                           \
     {                                                                                                                            \
-        auto &&_lumenOptError_ = ( Expr );                                                                                       \
-        if ( _lumenOptError_.HasValue() ) [[unlikely]]                                                                           \
+        auto &&_luminaOptError_ = ( Expr );                                                                                      \
+        if ( _luminaOptError_.HasValue() ) [[unlikely]]                                                                          \
         {                                                                                                                        \
-            return Lumina::MakeUnexpected( *std::forward<decltype( _lumenOptError_ )>( _lumenOptError_ ) );                      \
+            return Lumina::MakeUnexpected( *std::forward<decltype( _luminaOptError_ )>( _luminaOptError_ ) );                    \
         }                                                                                                                        \
     } while ( 0 )
 
