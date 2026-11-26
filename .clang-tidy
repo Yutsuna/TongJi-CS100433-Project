@@ -64,7 +64,7 @@ Checks: >
   -cert-err33-c
 
 ExtraArgsBefore:
-  - '-DLUMEN_CLANG_TIDY=1'
+  - '-DLUMINA_CLANG_TIDY=1'
 
 WarningsAsErrors: "*"
 HeaderFilterRegex: "Source/.*"
