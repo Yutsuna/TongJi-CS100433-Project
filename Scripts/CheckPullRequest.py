@@ -56,7 +56,7 @@ def _report_invalid_title( title: str, reason: str ) -> int:
                 "**Required format:** `<PRType>(<PRScope>): <IssueNumber> <Description>`",
                 "",
                 "- `PRType` ∈ Chore / Fix / Feat / Refactor / CI / Test / Style / BREAKING",
-                "- `PRScope` ∈ Top-level directory names under `Source/`, or `Lumen`",
+                "- `PRScope` ∈ Top-level directory names under `Source/`, or `Lumina`",
                 "- `IssueNumber` Format like `#123`, must be the associated Issue number",
                 "- `Description` First character must be uppercase",
 
@@ -85,7 +85,7 @@ def _parse_arguments( argv: list[str] ) -> Namespace:
     return parser.parse_args(argv)
 
 
-def _scope_error( scopes: LumenScopes, title: str, exception: str ) -> int:
+def _scope_error( scopes: LuminaScopes, title: str, exception: str ) -> int:
     print("Allowed Scopes:")
     for scope in scopes:
         print(f"  - {scope}")
@@ -95,7 +95,7 @@ def _scope_error( scopes: LumenScopes, title: str, exception: str ) -> int:
 def main( argv: list[str] ) -> int:
     args = _parse_arguments(argv)
     title = os.environ.get("PR_TITLE", "")
-    scopes = LumenScopes.discover(args.source_root)
+    scopes = LuminaScopes.discover(args.source_root)
 
     print("Allowed Scopes:")
     for scope in scopes:

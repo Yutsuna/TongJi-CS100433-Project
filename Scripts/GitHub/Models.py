@@ -9,7 +9,7 @@ from pathlib import Path
 from .Configuration import GLOBAL_BASE_SCOPES, GLOBAL_SOURCE_ROOT, GLOBAL_TITLE_RE
 from .Errors import IssueLookupError, IssueNotFound, ScopeError, TitleError
 
-__all__ = ["GitHubIssue", "GitHubPullRequest", "LumenScopes"]
+__all__ = ["GitHubIssue", "GitHubPullRequest", "LuminaScopes"]
 
 
 def _starts_with_capital( cstring : str ) -> bool:
@@ -17,12 +17,12 @@ def _starts_with_capital( cstring : str ) -> bool:
 
 
 @dataclass(frozen=True)
-class LumenScopes:
+class LuminaScopes:
 
     values: tuple[str, ...]
 
     @classmethod
-    def discover(cls, root: Path = GLOBAL_SOURCE_ROOT ) -> LumenScopes:
+    def discover(cls, root: Path = GLOBAL_SOURCE_ROOT ) -> LuminaScopes:
         directories : list[str] = []
         if root.is_dir():
             directories = [
@@ -50,7 +50,7 @@ class GitHubPullRequest:
     description: str
 
     @classmethod
-    def parse(cls, raw: str, scopes: LumenScopes ) -> GitHubPullRequest:
+    def parse(cls, raw: str, scopes: LuminaScopes ) -> GitHubPullRequest:
         if not raw:
             raise TitleError("The title of the pull request is empty.")
 
@@ -60,7 +60,7 @@ class GitHubPullRequest:
 
         scope = match["scope"]
         if scope not in scopes:
-            raise ScopeError(f"The scope `{scope}` is not in `Source/` or `Lumen`.")
+            raise ScopeError(f"The scope `{scope}` is not in `Source/` or `Lumina`.")
 
         description = match["description"].strip()
         if not _starts_with_capital(description):

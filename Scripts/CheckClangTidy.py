@@ -77,7 +77,7 @@ class CheckClangTidy( SourceCheck ):
             raise ConfigurationError("Missing configuration", f"Need: {self._config} to exist.")
 
         self._build = workspace.absolute(arguments.build_dir).resolve()
-        self._temporary = tempfile.TemporaryDirectory(prefix="lumen-clang-tidy-")
+        self._temporary = tempfile.TemporaryDirectory(prefix="lumina-clang-tidy-")
         self._database_dir = Path(self._temporary.name)
         self._sanitized_database(self._build, self._database_dir)
         self._database = CompilationDatabase.load(self._database_dir)
